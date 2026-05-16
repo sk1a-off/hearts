@@ -3,19 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ночное небо</title>
+  <title>Ночное сердце</title>
   <style>
     :root {
-      --bg-top: #050b1a;
-      --bg-mid: #0d1f44;
-      --bg-bot: #1a3b76;
-      --text: #edf4ff;
-      --star: #ffe49c;
-      --star-open: #ffd26f;
-      --letter: #17213a;
-      --glass: rgba(255, 255, 255, 0.1);
-      --heart-word: #ffd9ea;
-      --heart-glow: rgba(255, 130, 174, 0.45);
+      --bg-top: #040914;
+      --bg-mid: #0a1c3d;
+      --bg-bot: #173f79;
+      --text: #eaf2ff;
     }
 
     * { box-sizing: border-box; }
@@ -23,15 +17,15 @@
     body {
       margin: 0;
       min-height: 100vh;
+      min-height: 100dvh;
       overflow: hidden;
-      font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+      font-family: "Segoe UI", sans-serif;
       color: var(--text);
       background:
-        radial-gradient(900px 500px at 18% 16%, rgba(114, 147, 255, 0.18) 0%, transparent 60%),
-        radial-gradient(820px 460px at 82% 20%, rgba(98, 205, 255, 0.14) 0%, transparent 62%),
-        radial-gradient(900px 460px at 56% 70%, rgba(90, 115, 210, 0.18) 0%, transparent 64%),
-        radial-gradient(1060px 560px at 50% 118%, rgba(76, 126, 227, 0.52) 0%, transparent 68%),
-        linear-gradient(180deg, #020611 0%, #061226 30%, #0b1e3f 62%, #173c73 100%);
+        radial-gradient(1100px 650px at 18% 20%, rgba(92, 130, 255, .16), transparent 60%),
+        radial-gradient(950px 600px at 84% 22%, rgba(105, 205, 255, .14), transparent 60%),
+        radial-gradient(1200px 720px at 50% 120%, rgba(98, 140, 240, .34), transparent 64%),
+        linear-gradient(180deg, var(--bg-top), var(--bg-mid) 52%, var(--bg-bot));
     }
 
     .stars-bg,
@@ -41,192 +35,69 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
-      background-repeat: repeat;
     }
 
     .stars-bg {
       background-image:
-        radial-gradient(1.6px 1.6px at 10% 18%, rgba(255,255,255,.85) 45%, transparent 50%),
-        radial-gradient(1.2px 1.2px at 76% 22%, rgba(255,255,255,.78) 45%, transparent 50%),
-        radial-gradient(1.4px 1.4px at 64% 68%, rgba(255,255,255,.68) 45%, transparent 50%),
-        radial-gradient(1.8px 1.8px at 25% 72%, rgba(255,255,255,.7) 45%, transparent 50%),
-        radial-gradient(1.2px 1.2px at 88% 56%, rgba(255,255,255,.75) 45%, transparent 50%);
-      animation: twinkle 4.5s ease-in-out infinite alternate;
+        radial-gradient(1.7px 1.7px at 8% 17%, rgba(255,255,255,.84) 45%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 25% 36%, rgba(255,255,255,.74) 45%, transparent 50%),
+        radial-gradient(1.6px 1.6px at 41% 16%, rgba(255,255,255,.76) 45%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 57% 44%, rgba(255,255,255,.72) 45%, transparent 50%),
+        radial-gradient(1.7px 1.7px at 72% 20%, rgba(255,255,255,.82) 45%, transparent 50%),
+        radial-gradient(1.4px 1.4px at 88% 34%, rgba(255,255,255,.68) 45%, transparent 50%),
+        radial-gradient(1.4px 1.4px at 79% 70%, rgba(255,255,255,.66) 45%, transparent 50%),
+        radial-gradient(1.5px 1.5px at 33% 78%, rgba(255,255,255,.7) 45%, transparent 50%);
+      animation: sky-twinkle 5.2s ease-in-out infinite alternate;
     }
 
-    .stars-bg::before {
-      background-image:
-        radial-gradient(220px 130px at 18% 28%, rgba(126, 160, 255, .16) 0%, transparent 72%),
-        radial-gradient(260px 160px at 72% 24%, rgba(110, 215, 255, .14) 0%, transparent 75%),
-        radial-gradient(300px 170px at 52% 58%, rgba(157, 135, 255, .1) 0%, transparent 78%);
-      filter: blur(2px);
-      animation: drift 26s ease-in-out infinite alternate;
-    }
-
-    .stars-bg::after {
-      background:
-        linear-gradient(115deg, transparent 0%, transparent 44%, rgba(255,255,255,.18) 46%, transparent 49%) -40% -20% / 240px 240px no-repeat,
-        linear-gradient(125deg, transparent 0%, transparent 46%, rgba(255,255,255,.14) 48%, transparent 51%) 130% 15% / 260px 260px no-repeat;
-      opacity: .38;
-      animation: meteors 11s linear infinite;
-    }
-
-    .moon {
-      position: fixed;
-      top: 7vh;
-      right: 8vw;
-      width: clamp(86px, 10vw, 132px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 32% 30%, rgba(255,255,255,.98) 0%, rgba(244, 251, 255, .9) 34%, rgba(198, 220, 255, .72) 65%, rgba(160, 188, 236, .48) 100%);
-      box-shadow:
-        0 0 36px rgba(185, 210, 255, .55),
-        0 0 84px rgba(115, 170, 255, .35),
-        inset -8px -10px 20px rgba(98, 118, 165, .22);
-      z-index: 0;
-      pointer-events: none;
-      animation: moon-breathe 9s ease-in-out infinite;
-    }
-
-    .moon::before {
-      content: "";
-      position: absolute;
-      inset: 18% 20% auto auto;
-      width: 18%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: rgba(160, 180, 214, .24);
-      box-shadow:
-        -22px 16px 0 3px rgba(160, 180, 214, .14),
-        -10px 34px 0 1px rgba(160, 180, 214, .1);
-    }
-
-    .wrap {
-      position: relative;
-      z-index: 1;
-      width: 100vw;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding: 0;
-      display: grid;
-      grid-template-rows: 1fr auto;
-      gap: 0;
-    }
-
-    .panel {
-      width: min(760px, 96%);
-      margin: 0 auto;
-      text-align: center;
-      border: 1px solid rgba(255,255,255,.2);
-      background: linear-gradient(180deg, rgba(255,255,255,.13), rgba(255,255,255,.06));
-      backdrop-filter: blur(10px);
-      border-radius: 16px;
-      padding: 14px 16px;
-      box-shadow: 0 14px 30px rgba(0,0,0,.2);
-    }
-
-    h1 {
-      margin: 0;
-      font-size: clamp(1.45rem, 1.8vw + .9rem, 2.2rem);
-      letter-spacing: .4px;
-      font-weight: 700;
-    }
-
-    p {
-      margin: 8px 0 0;
-      font-size: clamp(.95rem, .9vw + .7rem, 1.1rem);
-      opacity: .95;
+    @keyframes sky-twinkle {
+      0%, 100% { opacity: .75; }
+      50% { opacity: 1; }
     }
 
     .sky {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      margin: 0;
-      border-radius: 0;
-    }
-    .trail-layer {
-      position: absolute;
+      position: fixed;
       inset: 0;
-      pointer-events: none;
       overflow: hidden;
-      z-index: 4;
     }
 
     .star {
       position: absolute;
-      width: clamp(60px, 6.8vw, 84px);
+      width: clamp(62px, 10vw, 88px);
       aspect-ratio: 1;
       border: none;
       background: transparent;
       cursor: pointer;
       transform: translate(-50%, -50%);
-      transition: transform .2s ease;
+      z-index: 4;
       -webkit-tap-highlight-color: transparent;
-      will-change: left, top, transform, opacity;
     }
-
-    .star:hover { transform: translate(-50%, -50%) scale(1.08); }
 
     .star-shape {
       position: absolute;
       inset: 0;
       display: grid;
       place-items: center;
-      font-size: clamp(3rem, 4.1vw, 4.3rem);
-      line-height: 1;
-      color: #e9f2ff;
-      filter: drop-shadow(0 0 8px rgba(183, 206, 236, 0.8));
+      font-size: clamp(3.1rem, 9.8vw, 4.2rem);
+      color: #e8f3ff;
       text-shadow:
-        0 0 12px rgba(203, 221, 246, .85),
-        0 0 24px rgba(158, 186, 222, .54),
-        0 0 38px rgba(141, 170, 208, .3);
-      animation: pulse 2.8s ease-in-out infinite, twinkle-star 3.6s ease-in-out infinite;
+        0 0 10px rgba(198, 219, 246, .86),
+        0 0 22px rgba(150, 184, 226, .58),
+        0 0 38px rgba(125, 162, 207, .36);
+      animation: star-breathe 2.8s ease-in-out infinite;
     }
 
-    .star-shape::before {
-      content: "✧";
+    .star .letter {
       position: absolute;
       inset: 0;
       display: grid;
       place-items: center;
-      color: rgba(225, 238, 255, 0.9);
-      font-size: .68em;
-      transform: rotate(18deg) scale(.92);
-      text-shadow: 0 0 10px rgba(191, 214, 244, .5);
-      animation: twinkle-star 2.2s ease-in-out infinite reverse;
-    }
-
-    .star-shape::after {
-      content: "";
-      position: absolute;
-      width: 26%;
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(248, 252, 255, .95) 0%, rgba(212, 228, 248, .5) 55%, transparent 100%);
-      filter: blur(1px);
-      animation: core-glow 2.4s ease-in-out infinite;
-    }
-
-    .star.revealed .star-shape {
-      color: var(--star-open);
-      animation: burst .4s ease forwards;
-    }
-
-    .letter {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      font-size: clamp(.95rem, 1.8vw, 1.2rem);
-      color: var(--letter);
-      z-index: 2;
-      user-select: none;
+      font-weight: 800;
+      font-size: clamp(.9rem, 3.2vw, 1.05rem);
+      color: #152747;
       opacity: 0;
-      transform: translateY(6px);
-      transition: opacity .25s ease, transform .25s ease;
+      transform: translateY(8px);
+      transition: opacity .4s ease, transform .4s ease;
     }
 
     .star.revealed .letter {
@@ -234,283 +105,190 @@
       transform: translateY(0);
     }
 
-    .star.fly { opacity: 0; pointer-events: none; transition: opacity .25s ease; }
+    .star.revealed .star-shape {
+      animation: star-pop .56s ease forwards;
+      color: #f4d98f;
+    }
 
-    .star.fade {
-      animation: none !important;
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(.2);
-      transition: opacity .55s ease, transform .55s ease;
+    .star.hidden { opacity: 0; pointer-events: none; transition: opacity .28s ease; }
+
+    @keyframes star-breathe {
+      0%, 100% { transform: scale(.98); }
+      50% { transform: scale(1.08); }
     }
-    .trail-dot {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(255,245,212,.86) 0%, rgba(255,209,130,.56) 45%, rgba(255,145,98,.18) 100%);
-      box-shadow: 0 0 10px rgba(255, 206, 130, .45);
-      animation: trail-fade 760ms ease-out forwards;
-    }
-    .trail-streak {
-      position: absolute;
-      width: var(--sz, 8px);
-      height: var(--sz, 8px);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(228, 240, 255, .9) 0%, rgba(185, 212, 244, .42) 55%, rgba(150, 184, 226, 0) 100%);
-      filter: blur(var(--blur, 1.8px));
-      opacity: var(--op, .5);
-      mix-blend-mode: screen;
-      pointer-events: none;
-      z-index: 4;
+
+    @keyframes star-pop {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.34); filter: brightness(1.2); }
+      100% { transform: scale(1.05); }
     }
 
     .comet {
       position: absolute;
-      width: 28px;
-      height: 28px;
+      width: clamp(22px, 5.4vw, 28px);
+      height: clamp(22px, 5.4vw, 28px);
       border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle at 33% 30%, #ffffff 0%, #e6f2ff 32%, #bad2ef 72%, rgba(145, 174, 214, .2) 100%);
+      box-shadow: 0 0 14px rgba(196, 220, 249, .8), 0 0 34px rgba(151, 187, 231, .4);
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    .trail-dot {
+      position: absolute;
+      width: var(--s, 10px);
+      height: var(--s, 10px);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(222,236,255,.9), rgba(168,197,234,.45) 55%, rgba(141,171,214,0) 100%);
+      filter: blur(var(--b, 2px));
+      opacity: var(--o, .4);
+      mix-blend-mode: screen;
       pointer-events: none;
       z-index: 5;
-      background:
-        radial-gradient(circle at 33% 28%, rgba(255,255,255,.98) 0%, rgba(232, 242, 255, .93) 24%, rgba(188, 210, 238, .76) 58%, rgba(136, 167, 208, .24) 100%);
-      box-shadow:
-        0 0 14px rgba(213, 229, 250, .75),
-        0 0 30px rgba(156, 187, 228, .34),
-        inset -2px -3px 5px rgba(112, 142, 181, .26);
-      transform: translate(-50%, -50%);
     }
 
-    .comet::before {
-      content: none;
-    }
-
-    .comet::after {
-      content: none;
-    }
-
-    .blast {
+    .particle {
       position: absolute;
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      pointer-events: none;
-      z-index: 6;
-      background: radial-gradient(circle, #f5f8ff 0%, #d6e3f6 58%, #a7c0df 100%);
-      box-shadow: 0 0 10px rgba(166, 194, 230, .55);
       transform: translate(-50%, -50%);
-      animation: blast-fly 1850ms cubic-bezier(.16,.62,.2,1) forwards;
+      background: radial-gradient(circle, #f7fbff 0%, #cfe0f7 58%, #94b2d8 100%);
+      box-shadow: 0 0 10px rgba(175, 203, 237, .6);
+      animation: particle-fly 1350ms cubic-bezier(.14,.64,.2,1) forwards;
+      z-index: 7;
+      pointer-events: none;
     }
-    .shockwave {
+
+    @keyframes particle-fly {
+      0% { opacity: .95; transform: translate(-50%, -50%) scale(.72); }
+      100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.06); }
+    }
+
+    .heart-text {
       position: absolute;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(206, 226, 250, .75);
-      box-shadow: 0 0 12px rgba(170, 197, 230, .38), inset 0 0 14px rgba(215, 231, 250, .38);
-      transform: translate(-50%, -50%);
+      inset: 0;
+      transform: scale(.92);
+      transform-origin: 50% 52%;
+      opacity: 0;
       pointer-events: none;
-      z-index: 6;
-      animation: shockwave-expand 1900ms cubic-bezier(.14,.64,.2,1) forwards;
+      z-index: 3;
+      filter: brightness(1) saturate(1) hue-rotate(0deg) drop-shadow(0 0 13px rgba(153, 52, 72, .35));
+      transition: opacity 900ms ease, transform 1200ms cubic-bezier(.2,.7,.2,1);
+    }
+
+    .heart-text.revealing,
+    .heart-text.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .heart-text.show {
+      animation: heart-pulse 7200ms ease-in-out 1200ms infinite;
+      will-change: transform, filter;
+    }
+
+    .heart-line {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #f3a4bd;
+      font-family: "DejaVu Sans Mono", "Cascadia Mono", "SFMono-Regular", "Courier New", monospace;
+      font-weight: 900;
+      letter-spacing: .03em;
+      font-size: clamp(8.6px, .9vw, 11.6px);
+      white-space: pre;
+      text-transform: uppercase;
+      opacity: 0;
+      animation: line-reveal 1600ms cubic-bezier(.2,.72,.2,1) forwards;
+      text-shadow:
+        0 0 5px rgba(255, 187, 207, .26),
+        0 0 14px rgba(206, 87, 124, .16);
+    }
+
+    .wave {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(224, 171, 195, .72);
+      box-shadow: 0 0 10px rgba(224, 171, 195, .35);
+      transform: translate(-50%, -50%);
+      animation: wave-expand 1400ms cubic-bezier(.14,.64,.2,1) forwards;
+      z-index: 7;
+      pointer-events: none;
+    }
+
+    @keyframes line-reveal {
+      0% { opacity: 0; transform: translateX(-50%) scale(.96); }
+      55% { opacity: 1; transform: translateX(-50%) scale(1.006); }
+      100% { opacity: 1; transform: translateX(-50%) scale(1); }
+    }
+
+    @keyframes wave-expand {
+      0% { opacity: .9; transform: translate(-50%, -50%) scale(.2); }
+      100% { opacity: 0; transform: translate(-50%, -50%) scale(8.5); }
+    }
+
+    @keyframes heart-pulse {
+      0%, 100% {
+        transform: scale(1);
+        filter: brightness(1) saturate(1) hue-rotate(0deg) drop-shadow(0 0 13px rgba(153, 52, 72, .32));
+      }
+      25% {
+        transform: scale(1.006);
+        filter: brightness(1.045) saturate(1.08) hue-rotate(-3deg) drop-shadow(0 0 15px rgba(235, 139, 171, .36));
+      }
+      50% {
+        transform: scale(1.018);
+        filter: brightness(1.105) saturate(1.16) hue-rotate(7deg) drop-shadow(0 0 20px rgba(255, 157, 190, .44));
+      }
+      75% {
+        transform: scale(1.006);
+        filter: brightness(1.045) saturate(1.08) hue-rotate(3deg) drop-shadow(0 0 15px rgba(244, 170, 154, .36));
+      }
     }
 
     .status {
       position: fixed;
       left: 50%;
       bottom: 14px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
       transform: translateX(-50%);
-      text-align: center;
-      font-size: clamp(1rem, 1.4vw + .6rem, 1.3rem);
+      color: #edf6ff;
       font-weight: 700;
-      min-height: 1.5em;
-      color: #eef6ff;
-      letter-spacing: .35px;
-      text-shadow: 0 2px 10px rgba(27, 44, 71, .55);
-      background: rgba(9, 20, 39, .42);
-      border: 1px solid rgba(185, 210, 242, .34);
+      letter-spacing: .4px;
+      text-shadow: 0 2px 8px rgba(17, 28, 49, .55);
+      background: rgba(8, 19, 37, .4);
+      border: 1px solid rgba(178, 203, 236, .32);
       border-radius: 999px;
       padding: 8px 16px;
+      max-width: calc(100vw - 24px);
+      white-space: nowrap;
+      font-size: clamp(12px, 3.6vw, 16px);
       backdrop-filter: blur(7px);
-      display: block;
       z-index: 20;
     }
 
-    .heart-cloud {
-      position: absolute;
-      inset: 0;
-      transform: scale(.92);
-      width: 100%;
-      height: 100%;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity .9s ease, transform .9s ease;
-      filter: drop-shadow(0 0 20px var(--heart-glow));
-      z-index: 5;
-    }
-
-    .heart-cloud.show {
-      opacity: 1;
-      transform: scale(1);
-      animation: heart-rise 1400ms cubic-bezier(.18,.74,.2,1) both, heart-pulse 3200ms ease-in-out 1500ms infinite;
-    }
-
-    .spark-layer {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      overflow: hidden;
-      z-index: 7;
-    }
-
-    .spark {
-      position: absolute;
-      width: var(--sz, 7px);
-      height: var(--sz, 7px);
-      border-radius: 50%;
-      background: radial-gradient(circle at 32% 28%, var(--spark-hot, #fff8d9) 0%, var(--spark-mid, #ffd27b) 52%, var(--spark-cool, #ff9f5e) 100%);
-      box-shadow: 0 0 10px rgba(182, 208, 239, 0.8), 0 0 20px rgba(142, 173, 213, 0.35);
-      animation: spark-fly var(--spark-time, 1400ms) cubic-bezier(.12,.62,.2,1) forwards;
-      transform: translate(-50%, -50%);
-    }
-
-    .word {
-      position: absolute;
-      color: #f1f7ff;
-      font-size: clamp(.54rem, .56vw + .4rem, .78rem);
-      font-weight: 600;
-      white-space: nowrap;
-      transform: translate(-50%, -50%);
-      opacity: 0;
-      animation: reveal 1800ms cubic-bezier(.2,.7,.2,1) forwards;
-      line-height: 1;
-      letter-spacing: .12px;
-      text-shadow:
-        0 0 8px rgba(170, 204, 243, .28),
-        0 0 16px rgba(149, 183, 223, .18);
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: .62; }
-      45% { opacity: .93; }
-      70% { opacity: .78; }
-    }
-
-    @keyframes drift {
-      0% { transform: translate3d(-2%, 0, 0) scale(1); opacity: .74; }
-      50% { transform: translate3d(2.3%, -1.8%, 0) scale(1.05); opacity: 1; }
-      100% { transform: translate3d(-1.4%, 1.5%, 0) scale(1.02); opacity: .82; }
-    }
-
-    @keyframes meteors {
-      0% { background-position: -45% -28%, 135% 8%; opacity: 0; }
-      15% { opacity: .42; }
-      48% { background-position: 28% 24%, 94% 32%; opacity: .15; }
-      72% { opacity: .38; }
-      100% { background-position: 114% 92%, 42% 76%; opacity: 0; }
-    }
-
-    @keyframes pulse {
-      0%, 100% { transform: scale(.98); }
-      50% { transform: scale(1.07); }
-    }
-
-    @keyframes twinkle-star {
-      0%, 100% { opacity: .74; }
-      45% { opacity: 1; }
-      72% { opacity: .84; }
-    }
-
-    @keyframes core-glow {
-      0%, 100% { transform: scale(.78); opacity: .62; }
-      50% { transform: scale(1.2); opacity: 1; }
-    }
-
-    @keyframes trail-fade {
-      0% { opacity: .54; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(.15); filter: blur(1.2px); }
-    }
-    @keyframes streak-fade { from { opacity: 1; } to { opacity: 0; } }
-    @keyframes blast-fly {
-      0% { opacity: .95; transform: translate(-50%, -50%) scale(.75); }
-      55% { opacity: .75; }
-      100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.08); }
-    }
-    @keyframes shockwave-expand {
-      0% { opacity: .88; transform: translate(-50%, -50%) scale(.3); }
-      70% { opacity: .52; }
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(9.2); }
-    }
-    @keyframes comet-tail {
-      0%, 100% { transform: translateY(-50%) scaleX(.92); opacity: .82; }
-      50% { transform: translateY(-50%) scaleX(1.08); opacity: 1; }
-    }
-    @keyframes comet-tail-soft {
-      0%, 100% { transform: translateY(-50%) scaleX(.88); opacity: .58; }
-      50% { transform: translateY(-50%) scaleX(1.12); opacity: .82; }
-    }
-
-    @keyframes burst {
-      0% { transform: scale(1); }
-      45% { transform: scale(1.22); }
-      100% { transform: scale(1.06); }
-    }
-
-    @keyframes reveal {
-      0% { opacity: 0; transform: translate(-50%, -50%) scale(.45); }
-      60% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
-      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    }
-
-    @keyframes spark-fly {
-      0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(.35);
+    @media (max-width: 560px) {
+      .heart-text {
+        filter: drop-shadow(0 0 9px rgba(153, 52, 72, .32));
       }
-      20% {
-        opacity: 1;
-      }
-      55% {
-        opacity: .8;
-      }
-      100% {
-        opacity: 0;
-        transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.12);
-      }
-    }
 
-    @keyframes moon-breathe {
-      0%, 100% { transform: scale(1); opacity: .94; }
-      50% { transform: scale(1.03); opacity: 1; }
-    }
-
-    @keyframes heart-rise {
-      0% { transform: scale(.86); opacity: 0; }
-      55% { transform: scale(1.03); opacity: 1; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    @keyframes heart-pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.035); }
+      .heart-line {
+        letter-spacing: .015em;
+        text-shadow: 0 0 4px rgba(210, 110, 140, .18);
+      }
     }
   </style>
 </head>
 <body>
   <div class="stars-bg" aria-hidden="true"></div>
-  <div class="moon" aria-hidden="true"></div>
-
-  <div class="wrap">
-    <section class="panel" style="display:none"></section>
-
-    <main class="sky" id="sky" aria-label="Небо со звездами">
-      <div class="trail-layer" id="trailLayer" aria-hidden="true"></div>
-      <section class="heart-cloud" id="heartCloud" aria-label="Сердце из слов"></section>
-      <div class="spark-layer" id="sparkLayer" aria-hidden="true"></div>
-    </main>
-
-    <div class="status" id="status">Нажимай на звезды · 0/10</div>
-  </div>
+  <main class="sky" id="sky" aria-label="Небо"></main>
+  <section class="heart-text" id="heartText" aria-label="Сердце из текста"></section>
+  <div class="status" id="status">Нажимай на звезды · 0/10</div>
 
   <script>
     const letters = ["Я", "Л", "Ю", "Б", "Л", "Ю", "Т", "Е", "Б", "Я"];
@@ -520,493 +298,545 @@
     ];
 
     const sky = document.getElementById("sky");
-    const trailLayer = document.getElementById("trailLayer");
     const status = document.getElementById("status");
-    const heartCloud = document.getElementById("heartCloud");
-    const sparkLayer = document.getElementById("sparkLayer");
+    const heartText = document.getElementById("heartText");
 
     let opened = 0;
     let assembling = false;
+    let assemblyPending = false;
+    let assemblyReadyAt = 0;
     let orbitHandle = null;
-    let lastFrame = 0;
-    let explodedComets = 0;
-    const stars = [];
-    const activeComets = [];
+    let lastFrame = performance.now();
+    let arrivedToHeart = 0;
+    let heartRows = [];
+    let heartRowCursor = 0;
+    let revealedHeartRows = new Set();
 
-    function createStar(letter, i) {
-      const star = document.createElement("button");
-      star.type = "button";
-      star.className = "star";
-      star.style.left = positions[i][0] + "%";
-      star.style.top = positions[i][1] + "%";
-      star.setAttribute("aria-label", `Звезда ${i + 1}`);
+    const stars = [];
+    const comets = [];
+
+    function makeStar(letter, i) {
+      const btn = document.createElement("button");
+      btn.className = "star";
+      btn.type = "button";
+      btn.style.left = `${positions[i][0]}%`;
+      btn.style.top = `${positions[i][1]}%`;
+      btn.setAttribute("aria-label", `Звезда ${i + 1}`);
 
       const shape = document.createElement("span");
       shape.className = "star-shape";
       shape.textContent = "✦";
-      shape.style.animationDelay = `${(i * 0.15).toFixed(2)}s`;
 
       const l = document.createElement("span");
       l.className = "letter";
       l.textContent = letter;
 
-      star.append(shape, l);
-
-      star.addEventListener("click", (event) => {
-        if (star.classList.contains("revealed")) return;
-
-        star.classList.add("revealed");
+      btn.append(shape, l);
+      btn.addEventListener("click", (ev) => {
+        if (btn.classList.contains("revealed")) return;
+        btn.classList.add("revealed");
         opened += 1;
-        setTimeout(() => transformStarToComet(star, i, event), 520);
-        if (opened < letters.length) {
-          status.textContent = `Нажимай на звезды · ${opened}/${letters.length}`;
-        } else {
-          status.textContent = `Нажимай на звезды · ${opened}/${letters.length}`;
-        }
+        status.textContent = `Нажимай на звезды · ${opened}/${letters.length}`;
+
+        const rect = sky.getBoundingClientRect();
+        const sx = ((ev.clientX - rect.left) / rect.width) * 100;
+        const sy = ((ev.clientY - rect.top) / rect.height) * 100;
+
+        explode(sx, sy, 28);
+
+        setTimeout(() => {
+          spawnComet(i, sx, sy);
+          btn.classList.add("hidden");
+          setTimeout(() => btn.remove(), 280);
+        }, 520);
 
         if (opened === letters.length) {
-          setTimeout(beginAssembly, 650);
+          assemblyPending = true;
+          assemblyReadyAt = 0;
         }
       });
 
-      sky.appendChild(star);
-      stars.push(star);
+      sky.appendChild(btn);
+      stars.push(btn);
     }
 
-    function transformStarToComet(star, index, event) {
-      const skyRect = sky.getBoundingClientRect();
-      const clickX = ((event.clientX - skyRect.left) / skyRect.width) * 100;
-      const clickY = ((event.clientY - skyRect.top) / skyRect.height) * 100;
-      const startX = Number.isFinite(clickX) ? clickX : positions[index][0];
-      const startY = Number.isFinite(clickY) ? clickY : positions[index][1];
+    function spawnComet(index, sx, sy) {
+      const el = document.createElement("span");
+      el.className = "comet";
+      el.style.left = `${sx}%`;
+      el.style.top = `${sy}%`;
+      sky.appendChild(el);
 
-      const comet = document.createElement("span");
-      comet.className = "comet";
-      comet.style.left = `${startX}%`;
-      comet.style.top = `${startY}%`;
-      sky.appendChild(comet);
+      const theta = (index / letters.length) * Math.PI * 2;
+      const rx = 36 + (index % 3) * 4;
+      const ry = 24 + (index % 2) * 3;
+      const tx = 50 + Math.cos(theta) * rx;
+      const ty = 54 + Math.sin(theta) * ry;
 
-      const orbitItem = {
-        index,
-        el: comet,
-        x: startX,
-        y: startY,
-        prevX: startX,
-        prevY: startY,
-        baseX: startX,
-        baseY: startY,
-        theta: (index / letters.length) * Math.PI * 2,
-        radiusX: 24 + (index % 4) * 4.6,
-        radiusY: 16 + (index % 3) * 3.4,
-        speed: 0.19 + (index % 5) * 0.028,
-        phase: index * 0.47,
-        orbitAmp: 0,
-        orbitStartMs: performance.now(),
+      const dx = tx - sx;
+      const dy = ty - sy;
+      const d = Math.hypot(dx, dy) || 1;
+      const nx = -dy / d;
+      const ny = dx / d;
+      const arc = (index % 2 === 0 ? 1 : -1) * (8 + (index % 4) * 2.2);
+      const txv = -Math.sin(theta) * rx;
+      const tyv = Math.cos(theta) * ry;
+      const tvd = Math.hypot(txv, tyv) || 1;
+      const tnx = txv / tvd;
+      const tny = tyv / tvd;
+      const tangentLead = 18 + (index % 3) * 2.5;
+
+      const c = {
+        idx: index,
+        el,
+        state: "toOrbit",
+        x: sx,
+        y: sy,
+        prevX: sx,
+        prevY: sy,
         lastAngle: 0,
-        lastTrailMs: 0,
         trail: [],
-        state: "orbit",
-        gatherStartMs: 0,
-        gatherMs: 0,
-        g1x: 0,
-        g1y: 0,
-        g2x: 0,
-        g2y: 0,
-        orbitCenterMs: 0,
-        orbitCenterDuration: 0,
-        orbitCenterTheta0: 0,
-        orbitCenterThetaStart: 0,
-        centerRadius: 0,
-        centerSpeed: 0,
-        phaseBlendStart: 0,
-        phaseBlendMs: 0,
-        px0: 0,
-        py0: 0,
-        startMs: 0,
-        flyDuration: 0,
-        sx: 0, sy: 0, mx: 0, my: 0, cx2: 0, cy2: 0, tx: 0, ty: 0,
-        chunkPoints: []
+        lastTrailMs: 0,
+        t0: performance.now(),
+        dur: 3600 + (index % 3) * 220,
+        sx,
+        sy,
+        c1x: sx + dx * 0.24 + nx * (arc * 1.25),
+        c1y: sy + dy * 0.24 + ny * (arc * 1.25),
+        c2x: tx - tnx * tangentLead - nx * (arc * 0.25),
+        c2y: ty - tny * tangentLead - ny * (arc * 0.25),
+        tx,
+        ty,
+        theta,
+        orbitRx: rx,
+        orbitRy: ry,
+        orbitSpeed: 0.32 + (index % 4) * 0.035,
+        toHeartStart: 0,
+        toHeartDur: 4300,
+        hx1: 0,
+        hy1: 0,
+        hx2: 0,
+        hy2: 0,
+        htx: 0,
+        hty: 0,
+        hpoints: []
       };
 
-      activeComets.push(orbitItem);
-      star.classList.add("fly");
-      setTimeout(() => star.remove(), 240);
-
+      comets.push(c);
       if (!orbitHandle) {
         lastFrame = performance.now();
-        orbitHandle = requestAnimationFrame(updateCometsFrame);
+        orbitHandle = requestAnimationFrame(tick);
       }
     }
 
-    function beginAssembly() {
+    function beginHeartAssembly() {
       if (assembling) return;
       assembling = true;
-      explodedComets = 0;
-      status.textContent = `Нажимай на звезды · ${opened}/${letters.length}`;
-      const settleStart = performance.now();
-      const settleMs = 2300;
-      const centerOrbitMs = 3200;
-      activeComets.forEach((c, i) => {
-        c.state = "gather";
-        c.settleStartMs = settleStart;
-        c.settleMs = settleMs;
-        c.sx = c.x;
-        c.sy = c.y;
-        c.ex = 50 + Math.cos((i / activeComets.length) * Math.PI * 2) * (33 + (i % 3) * 3.8);
-        c.ey = 54 + Math.sin((i / activeComets.length) * Math.PI * 2) * (21.6 + (i % 2) * 2.8);
-        const gdx = c.ex - c.sx;
-        const gdy = c.ey - c.sy;
-        const gd = Math.hypot(gdx, gdy) || 1;
-        const gnx = -gdy / gd;
-        const gny = gdx / gd;
-        const gcurve = (i % 2 === 0 ? 1 : -1) * (2.6 + (i % 4) * 0.9);
-        c.g1x = c.sx + gdx * 0.28 + gnx * gcurve;
-        c.g1y = c.sy + gdy * 0.28 + gny * gcurve;
-        c.g2x = c.sx + gdx * 0.72 - gnx * gcurve * 0.85;
-        c.g2y = c.sy + gdy * 0.72 - gny * gcurve * 0.85;
-        c.orbitCenterDuration = centerOrbitMs;
-        c.orbitCenterTheta0 = (i / activeComets.length) * Math.PI * 2;
-        c.centerRadius = 38 + (i % 3) * 4.2;
-        c.centerSpeed = 1.1 + (i % 4) * 0.06;
-      });
-      setTimeout(() => {
-        activeComets.forEach((c) => {
-          c.px0 = c.x;
-          c.py0 = c.y;
-          c.state = "centerOrbit";
-          c.orbitCenterMs = performance.now();
-          c.phaseBlendStart = c.orbitCenterMs;
-          c.phaseBlendMs = 520;
-          const dx = c.x - 50;
-          const dy = c.y - 54;
-          c.orbitCenterThetaStart = Math.atan2(dy / 0.68, dx);
-        });
-      }, settleMs);
-      setTimeout(startHeartAssembly, settleMs + centerOrbitMs);
-    }
+      arrivedToHeart = 0;
+      heartRows = buildHeartRows();
+      heartRowCursor = 0;
+      revealedHeartRows = new Set();
+      heartText.innerHTML = "";
+      heartText.classList.remove("show");
+      heartText.classList.add("revealing");
 
-    function startHeartAssembly() {
-      const chunks = makeHeartChunks(activeComets.length);
-      const assignments = assignTargets(activeComets, chunks);
-      const totalFlight = 3600;
-      heartCloud.classList.remove("show");
-      heartCloud.innerHTML = "";
-      heartCloud.classList.add("show");
+      const chunks = makeHeartChunks(comets.length);
+      const assigned = assignTargets(comets, chunks);
 
-      activeComets.forEach((comet, i) => {
-        const target = assignments[i].anchor;
-        const curveDir = i % 2 === 0 ? 1 : -1;
-        const dx = target.x - comet.x;
-        const dy = target.y - comet.y;
+      comets.forEach((c, i) => {
+        const target = assigned[i].anchor;
+        const dx = target.x - c.x;
+        const dy = target.y - c.y;
         const d = Math.hypot(dx, dy) || 1;
         const nx = -dy / d;
         const ny = dx / d;
+        const curve = (i % 2 === 0 ? 1 : -1) * (7 + (i % 3) * 2.1);
+        const vx = c.x - c.prevX;
+        const vy = c.y - c.prevY;
+        const vd = Math.hypot(vx, vy);
+        const ux = vd > 0.001 ? vx / vd : -Math.sin(c.theta || 0);
+        const uy = vd > 0.001 ? vy / vd : Math.cos(c.theta || 0);
+        const departLead = Math.min(30, Math.max(18, d * 0.34));
+        const arriveLead = Math.min(24, Math.max(12, d * 0.28));
 
-        comet.state = "toTarget";
-        comet.startMs = performance.now();
-        comet.flyDuration = totalFlight;
-        comet.sx = comet.x;
-        comet.sy = comet.y;
-        comet.px0 = comet.x;
-        comet.py0 = comet.y;
-        comet.phaseBlendStart = comet.startMs;
-        comet.phaseBlendMs = 520;
-        const arc = (2.2 + (i % 4) * 0.9) * curveDir;
-        comet.mx = comet.x + dx * 0.32 + nx * arc;
-        comet.my = comet.y + dy * 0.32 + ny * arc;
-        comet.cx2 = comet.x + dx * 0.74 - nx * arc * 0.8;
-        comet.cy2 = comet.y + dy * 0.74 - ny * arc * 0.8;
-        comet.tx = target.x;
-        comet.ty = target.y;
-        comet.chunkPoints = assignments[i].points;
-        comet.trail.length = 0;
-        comet.lastTrailMs = 0;
+        c.state = "toHeart";
+        c.toHeartStart = performance.now();
+        c.toHeartDur = 4600;
+        c.sx = c.x;
+        c.sy = c.y;
+        c.hx1 = c.x + ux * departLead + nx * curve * 0.8;
+        c.hy1 = c.y + uy * departLead + ny * curve * 0.8;
+        c.hx2 = target.x - (dx / d) * arriveLead - nx * curve * 0.55;
+        c.hy2 = target.y - (dy / d) * arriveLead - ny * curve * 0.55;
+        c.htx = target.x;
+        c.hty = target.y;
+        c.hpoints = assigned[i].points;
       });
     }
 
-    function updateCometsFrame(now) {
+    function tick(now) {
       const dt = Math.min(0.05, (now - lastFrame) / 1000);
       lastFrame = now;
       let alive = 0;
 
-      activeComets.forEach((c, idx) => {
+      comets.forEach((c) => {
         if (c.state === "done") return;
         alive += 1;
-        if (c.state === "orbit") {
-          const ot = Math.min(1, (now - c.orbitStartMs) / 1400);
-          const easeIn = ot * ot * (3 - 2 * ot);
-          c.theta += c.speed * dt * (0.12 + easeIn * 0.88);
-          c.orbitAmp = easeIn;
-          const drift = Math.sin(now * 0.00023 + c.phase) * 2.6 * easeIn * easeIn;
-          c.x = c.baseX + (Math.cos(c.theta) * c.radiusX + drift) * c.orbitAmp;
-          c.y = c.baseY + Math.sin(c.theta * 0.94 + c.phase * 0.35) * c.radiusY * c.orbitAmp;
-        } else if (c.state === "settle") {
-          const t = Math.min(1, (now - c.settleStartMs) / c.settleMs);
-          const eased = 1 - Math.pow(1 - t, 3);
-          c.x = c.sx + (c.ex - c.sx) * eased;
-          c.y = c.sy + (c.ey - c.sy) * eased;
-        } else if (c.state === "gather") {
-          const t = Math.min(1, (now - c.settleStartMs) / c.settleMs);
-          const eased = t * t * t * (t * (6 * t - 15) + 10);
-          const u = 1 - eased;
-          c.x =
-            u * u * u * c.sx +
-            3 * u * u * eased * c.g1x +
-            3 * u * eased * eased * c.g2x +
-            eased * eased * eased * c.ex;
-          c.y =
-            u * u * u * c.sy +
-            3 * u * u * eased * c.g1y +
-            3 * u * eased * eased * c.g2y +
-            eased * eased * eased * c.ey;
-        } else if (c.state === "centerOrbit") {
-          const t = (now - c.orbitCenterMs) / 1000;
-          const theta = c.orbitCenterThetaStart + t * c.centerSpeed;
-          const ox = 50 + Math.cos(theta) * c.centerRadius;
-          const oy = 54 + Math.sin(theta) * (c.centerRadius * 0.74);
-          const bt = Math.min(1, (now - c.phaseBlendStart) / c.phaseBlendMs);
-          const b = bt * bt * (3 - 2 * bt);
-          c.x = c.px0 + (ox - c.px0) * b;
-          c.y = c.py0 + (oy - c.py0) * b;
-        } else if (c.state === "toTarget") {
-          if (now < c.startMs) return;
-          const t = Math.min(1, (now - c.startMs) / c.flyDuration);
-          const eased = t * t * t * (t * (6 * t - 15) + 10);
-          const u = 1 - eased;
-          const tx =
-            u * u * u * c.sx +
-            3 * u * u * eased * c.mx +
-            3 * u * eased * eased * c.cx2 +
-            eased * eased * eased * c.tx;
-          const ty =
-            u * u * u * c.sy +
-            3 * u * u * eased * c.my +
-            3 * u * eased * eased * c.cy2 +
-            eased * eased * eased * c.ty;
-          const bt = Math.min(1, (now - c.phaseBlendStart) / c.phaseBlendMs);
-          const b = bt * bt * (3 - 2 * bt);
-          c.x = c.px0 + (tx - c.px0) * b;
-          c.y = c.py0 + (ty - c.py0) * b;
+
+        if (c.state === "toOrbit") {
+          const t = Math.min(1, (now - c.t0) / c.dur);
+          const e = flowEase(t);
+          const u = 1 - e;
+          c.x = u*u*u*c.sx + 3*u*u*e*c.c1x + 3*u*e*e*c.c2x + e*e*e*c.tx;
+          c.y = u*u*u*c.sy + 3*u*u*e*c.c1y + 3*u*e*e*c.c2y + e*e*e*c.ty;
           if (t >= 1) {
-            explodeAtPercent(c.tx, c.ty, c.chunkPoints);
-            c.el.remove();
+            c.state = "orbit";
+            c.theta = Math.atan2((c.y - 54) / (c.orbitRy || 1), (c.x - 50) / (c.orbitRx || 1));
+          }
+        } else if (c.state === "orbit") {
+          c.theta += c.orbitSpeed * dt;
+          c.x = 50 + Math.cos(c.theta) * c.orbitRx;
+          c.y = 54 + Math.sin(c.theta) * c.orbitRy;
+        } else if (c.state === "toHeart") {
+          const t = Math.min(1, (now - c.toHeartStart) / c.toHeartDur);
+          const e = flowEase(t);
+          const u = 1 - e;
+          c.x = u*u*u*c.sx + 3*u*u*e*c.hx1 + 3*u*e*e*c.hx2 + e*e*e*c.htx;
+          c.y = u*u*u*c.sy + 3*u*u*e*c.hy1 + 3*u*e*e*c.hy2 + e*e*e*c.hty;
+          if (t >= 1) {
             c.state = "done";
-            explodedComets += 1;
-            if (explodedComets === activeComets.length) {
+            c.el.remove();
+            const ex = c.x;
+            const ey = c.y;
+            explode(ex, ey, 42);
+            revealHeartChunk(c.hpoints, ex, ey);
+            arrivedToHeart += 1;
+            if (arrivedToHeart === comets.length) {
+              heartText.classList.add("show");
               status.textContent = "Я люблю тебя";
             }
-            return;
           }
         }
 
         const vx = c.x - c.prevX;
         const vy = c.y - c.prevY;
         const speed = Math.hypot(vx, vy);
-        const rawAngle = Math.atan2(vy, vx) * 180 / Math.PI;
-        const delta = ((((rawAngle - c.lastAngle) + 540) % 360) - 180);
-        const angle = c.lastAngle + delta * 0.22;
-        const turn = ((((angle - c.lastAngle) + 540) % 360) - 180);
-        c.lastAngle = angle;
+        const angRaw = Math.atan2(vy, vx) * 180 / Math.PI;
+        const dAng = ((((angRaw - c.lastAngle) + 540) % 360) - 180);
+        const ang = c.lastAngle + dAng * 0.25;
+        c.lastAngle = ang;
+
         c.el.style.left = `${c.x}%`;
         c.el.style.top = `${c.y}%`;
-        c.el.style.transform = `translate(-50%, -50%) rotate(${angle.toFixed(1)}deg) scale(${(1 + Math.min(0.1, speed * 0.025)).toFixed(3)})`;
-        if (speed > 0.005 && (now - c.lastTrailMs) > 24) {
-          c.trail.push({ x: c.x, y: c.y, s: speed });
-          if (c.trail.length > 18) c.trail.shift();
-          renderCometTrail(c.trail);
+        c.el.style.transform = `translate(-50%, -50%) rotate(${ang.toFixed(1)}deg)`;
+
+        if (speed > 0.004 && (now - c.lastTrailMs) > 24) {
+          c.trail.push({ x: c.x, y: c.y });
+          if (c.trail.length > 20) c.trail.shift();
+          renderTrail(c.trail);
           c.lastTrailMs = now;
         }
+
         c.prevX = c.x;
         c.prevY = c.y;
       });
 
-      if (alive > 0) {
-        orbitHandle = requestAnimationFrame(updateCometsFrame);
-      } else {
-        orbitHandle = null;
-      }
-    }
-
-    function explodeAtPercent(x, y, chunkPoints) {
-      emitSparks(22, x, y);
-      const wave = document.createElement("span");
-      wave.className = "shockwave";
-      wave.style.left = `${x}%`;
-      wave.style.top = `${y}%`;
-      sky.appendChild(wave);
-      setTimeout(() => wave.remove(), 1000);
-
-      for (let i = 0; i < 14; i++) {
-        const blast = document.createElement("span");
-        blast.className = "blast";
-        blast.style.left = `${x}%`;
-        blast.style.top = `${y}%`;
-        const angle = Math.random() * Math.PI * 2;
-        const radius = 18 + Math.random() * 54;
-        blast.style.setProperty("--dx", `${Math.cos(angle) * radius}px`);
-        blast.style.setProperty("--dy", `${Math.sin(angle) * radius}px`);
-        sky.appendChild(blast);
-        setTimeout(() => blast.remove(), 860);
-      }
-      revealHeartChunk(chunkPoints, x, y);
-    }
-
-    function assignTargets(comets, chunks) {
-      const starPts = comets.map((c, i) => ({ i, x: c.x, y: c.y }));
-      const targetPts = chunks.map((c, i) => ({ i, x: c.anchor.x, y: c.anchor.y, points: c.points }));
-      const assignments = new Array(comets.length);
-
-      starPts.forEach(star => {
-        let best = 0;
-        let bestD = Infinity;
-        targetPts.forEach((t, idx) => {
-          const d = (star.x - t.x) * (star.x - t.x) + (star.y - t.y) * (star.y - t.y);
-          if (d < bestD) {
-            bestD = d;
-            best = idx;
+      if (assemblyPending && !assembling && comets.length === letters.length) {
+        const allOrbit = comets.every((c) => c.state === "orbit");
+        if (allOrbit) {
+          if (!assemblyReadyAt) assemblyReadyAt = now + 1250;
+          if (now >= assemblyReadyAt) {
+            assemblyPending = false;
+            assemblyReadyAt = 0;
+            beginHeartAssembly();
           }
-        });
-        const chosen = targetPts.splice(best, 1)[0];
-        assignments[star.i] = { anchor: { x: chosen.x, y: chosen.y }, points: chosen.points };
-      });
-
-      return assignments;
-    }
-
-    function makeHeartChunks(chunkCount) {
-      const points = [];
-      const scales = [1.0, 0.9, 0.8, 0.7, 0.6];
-      for (let t = 0; t < Math.PI * 2; t += 0.028) {
-        const bx = 16 * Math.pow(Math.sin(t), 3);
-        const by = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-        scales.forEach((s, idx) => {
-          if ((Math.floor(t * 1000) + idx) % (idx + 2) === 0) {
-            points.push({ x: bx * s, y: by * s });
-          }
-        });
-      }
-
-      const minX = Math.min(...points.map(p => p.x));
-      const maxX = Math.max(...points.map(p => p.x));
-      const minY = Math.min(...points.map(p => p.y));
-      const maxY = Math.max(...points.map(p => p.y));
-      const spanX = maxX - minX;
-      const spanY = maxY - minY;
-
-      const heartWidth = 78;
-      const heartHeight = 82;
-      const offsetX = 50 - heartWidth / 2;
-      const offsetY = 58 - heartHeight / 2;
-      let normalized = points.map(p => ({
-        x: offsetX + ((p.x - minX) / spanX) * heartWidth,
-        y: offsetY + ((p.y - minY) / spanY) * heartHeight
-      }));
-
-      const reduced = sparsePoints(normalized, 2.55);
-
-      const anchors = [];
-      const step = Math.max(1, Math.floor(reduced.length / chunkCount));
-      for (let i = 0; i < chunkCount; i++) {
-        anchors.push(reduced[Math.min(reduced.length - 1, i * step)]);
-      }
-
-      const buckets = anchors.map(a => ({ anchor: { x: a.x, y: a.y }, points: [] }));
-      reduced.forEach((p) => {
-        let best = 0;
-        let bestD = Infinity;
-        for (let i = 0; i < anchors.length; i++) {
-          const dx = p.x - anchors[i].x;
-          const dy = p.y - anchors[i].y;
-          const d = dx * dx + dy * dy;
-          if (d < bestD) {
-            bestD = d;
-            best = i;
-          }
+        } else {
+          assemblyReadyAt = 0;
         }
-        buckets[best].points.push(p);
-      });
-      return buckets;
+      }
+
+      if (alive > 0) orbitHandle = requestAnimationFrame(tick);
+      else orbitHandle = null;
     }
 
-    function sparsePoints(points, minDist) {
-      const chosen = [];
-      points.forEach((p) => {
-        const near = chosen.some((q) => {
-          const dx = p.x - q.x;
-          const dy = p.y - q.y;
-          return (dx * dx + dy * dy) < (minDist * minDist);
-        });
-        if (!near) chosen.push(p);
-      });
-      return chosen;
+    function smoother(t) {
+      return t*t*t*(t*(6*t - 15) + 10);
     }
 
-    function revealHeartChunk(points, epicenterX, epicenterY) {
-      const phrase = "я люблю тебя";
-      const chunkDelay = Math.random() * 0.22;
-      points.forEach((p, i) => {
-        const node = document.createElement("span");
-        node.className = "word";
-        node.textContent = phrase;
-        node.style.left = `${p.x}%`;
-        node.style.top = `${p.y}%`;
-        const d = Math.hypot(p.x - epicenterX, p.y - epicenterY);
-        node.style.animationDelay = `${(chunkDelay + d * 0.013 + i * 0.0022).toFixed(3)}s`;
-        node.style.fontSize = `${(0.62 + ((i % 4) * 0.02)).toFixed(2)}em`;
-        heartCloud.appendChild(node);
-      });
+    function flowEase(t) {
+      return Math.min(1, Math.max(0, 0.72 * t + 0.28 * smoother(t)));
     }
 
-    function renderCometTrail(trail) {
+    function renderTrail(trail) {
       const n = trail.length;
       for (let i = 0; i < n; i++) {
         const p = trail[i];
         const k = i / Math.max(1, n - 1);
-        const dot = document.createElement("span");
-        dot.className = "trail-streak";
-        dot.style.left = `${p.x}%`;
-        dot.style.top = `${p.y}%`;
-        const size = 3.5 + k * 18;
-        dot.style.setProperty("--sz", `${size.toFixed(2)}px`);
-        dot.style.setProperty("--blur", `${(0.8 + k * 2.8).toFixed(2)}px`);
-        dot.style.setProperty("--op", `${(0.08 + k * 0.5).toFixed(3)}`);
-        trailLayer.appendChild(dot);
-        setTimeout(() => dot.remove(), 460);
+        const d = document.createElement("span");
+        d.className = "trail-dot";
+        d.style.left = `${p.x}%`;
+        d.style.top = `${p.y}%`;
+        d.style.setProperty("--s", `${(4 + k * 16).toFixed(2)}px`);
+        d.style.setProperty("--b", `${(0.8 + k * 3.2).toFixed(2)}px`);
+        d.style.setProperty("--o", `${(0.08 + k * 0.55).toFixed(3)}`);
+        sky.appendChild(d);
+        setTimeout(() => d.remove(), 440);
       }
     }
 
-    function emitSparks(count, xPercent = 50, yPercent = 56) {
-      const rect = sparkLayer.getBoundingClientRect();
-      const centerX = rect.width * (xPercent / 100);
-      const centerY = rect.height * (yPercent / 100);
+    function explode(x, y, count) {
+      const wave = document.createElement("span");
+      wave.className = "wave";
+      wave.style.left = `${x}%`;
+      wave.style.top = `${y}%`;
+      sky.appendChild(wave);
+      setTimeout(() => wave.remove(), 1450);
 
       for (let i = 0; i < count; i++) {
-        const spark = document.createElement("span");
-        spark.className = "spark";
-        spark.style.left = `${centerX}px`;
-        spark.style.top = `${centerY}px`;
-
-        const angle = Math.random() * Math.PI * 2;
-        const distance = 20 + Math.random() * 82;
-        const dx = Math.cos(angle) * distance;
-        const dy = Math.sin(angle) * distance;
-        spark.style.setProperty("--dx", `${dx.toFixed(1)}px`);
-        spark.style.setProperty("--dy", `${dy.toFixed(1)}px`);
-        spark.style.setProperty("--sz", `${(2.2 + Math.random() * 3.8).toFixed(2)}px`);
-        spark.style.setProperty("--spark-time", `${(780 + Math.random() * 620).toFixed(0)}ms`);
-        if (Math.random() > 0.55) {
-          spark.style.setProperty("--spark-hot", "#f7fbff");
-          spark.style.setProperty("--spark-mid", "#d9e7fb");
-          spark.style.setProperty("--spark-cool", "#adc5e5");
-        }
-        spark.style.animationDelay = `${(Math.random() * 120).toFixed(0)}ms`;
-
-        sparkLayer.appendChild(spark);
-        setTimeout(() => spark.remove(), 1500);
+        const p = document.createElement("span");
+        p.className = "particle";
+        p.style.left = `${x}%`;
+        p.style.top = `${y}%`;
+        const a = Math.random() * Math.PI * 2;
+        const r = 26 + Math.random() * 84;
+        p.style.setProperty("--dx", `${(Math.cos(a) * r).toFixed(1)}px`);
+        p.style.setProperty("--dy", `${(Math.sin(a) * r).toFixed(1)}px`);
+        sky.appendChild(p);
+        setTimeout(() => p.remove(), 1400);
       }
     }
 
-    letters.forEach(createStar);
+    function makeHeartChunks(chunkCount) {
+      const rows = heartRows.length ? heartRows : buildHeartRows();
+      const points = [];
+
+      rows.forEach((row, rowIndex) => {
+        const segments = row.segments || [{ center: 50, width: 70 }];
+        segments.forEach((segment) => {
+          const width = Math.max(3, segment.width);
+          const count = Math.max(2, Math.round(width / 8));
+          for (let i = 0; i < count; i++) {
+            const k = count === 1 ? 0.5 : i / (count - 1);
+            points.push({
+              x: segment.center - width / 2 + width * k,
+              y: row.y,
+              row: rowIndex
+            });
+          }
+        });
+      });
+
+      const anchors = [];
+      const step = Math.max(1, Math.floor(points.length / chunkCount));
+      for (let i = 0; i < chunkCount; i++) {
+        anchors.push(points[Math.min(points.length - 1, i * step)]);
+      }
+
+      const chunks = anchors.map((a) => ({ anchor: { x: a.x, y: a.y }, points: [] }));
+      points.forEach((p) => {
+        let best = 0;
+        let bestDist = Infinity;
+        anchors.forEach((a, i) => {
+          const d = (p.x - a.x) * (p.x - a.x) + (p.y - a.y) * (p.y - a.y);
+          if (d < bestDist) {
+            bestDist = d;
+            best = i;
+          }
+        });
+        chunks[best].points.push(p);
+      });
+
+      return chunks;
+    }
+
+    function sparse(points, minDist) {
+      const out = [];
+      const md2 = minDist * minDist;
+      points.forEach((p) => {
+        let near = false;
+        for (let i = 0; i < out.length; i++) {
+          const dx = p.x - out[i].x;
+          const dy = p.y - out[i].y;
+          if (dx*dx + dy*dy < md2) { near = true; break; }
+        }
+        if (!near) out.push(p);
+      });
+      return out;
+    }
+
+    function assignTargets(cometsList, chunks) {
+      const starsP = cometsList.map((c, i) => ({ i, x: c.x, y: c.y }));
+      const targets = chunks.map((c) => ({ x: c.anchor.x, y: c.anchor.y, points: c.points }));
+      const out = new Array(cometsList.length);
+
+      starsP.forEach((s) => {
+        let bi = 0;
+        let bd = Infinity;
+        targets.forEach((t, i) => {
+          const d = (s.x - t.x)*(s.x - t.x) + (s.y - t.y)*(s.y - t.y);
+          if (d < bd) { bd = d; bi = i; }
+        });
+        const pick = targets.splice(bi, 1)[0];
+        out[s.i] = { anchor: { x: pick.x, y: pick.y }, points: pick.points };
+      });
+
+      return out;
+    }
+
+    function revealHeartChunk(points, ex, ey) {
+      const rowsPerBlast = Math.max(3, Math.ceil(heartRows.length / Math.max(1, letters.length)));
+      const picked = Array.from(new Set((points || []).map((p) => p.row)))
+        .filter((i) => Number.isInteger(i) && !revealedHeartRows.has(i))
+        .sort((a, b) => Math.abs(heartRows[a].y - ey) - Math.abs(heartRows[b].y - ey));
+
+      const nearest = heartRows
+        .map((row, i) => ({ i, d: Math.abs(row.y - ey) }))
+        .filter((row) => !revealedHeartRows.has(row.i) && !picked.includes(row.i))
+        .sort((a, b) => a.d - b.d);
+
+      while (picked.length < rowsPerBlast && nearest.length) {
+        picked.push(nearest.shift().i);
+      }
+
+      picked.sort((a, b) => a - b).forEach((i, order) => {
+        const row = heartRows[i];
+        const n = document.createElement("span");
+        n.className = "heart-line";
+        n.textContent = row.text;
+        n.dataset.row = i;
+        n.style.left = "50%";
+        n.style.top = `${row.y}%`;
+        const d = Math.hypot(50 - ex, row.y - ey);
+        n.style.animationDelay = `${(0.03 + d * 0.012 + order * 0.045).toFixed(3)}s`;
+        n.style.fontSize = `${row.size}px`;
+        heartText.appendChild(n);
+        revealedHeartRows.add(i);
+      });
+      heartRowCursor = revealedHeartRows.size;
+    }
+
+    function buildHeartRows() {
+      const phrase = "Я ЛЮБЛЮ ТЕБЯ ";
+      const layout = getHeartLayout();
+      const cols = layout.cols;
+      const sampleRows = layout.sampleRows;
+      const visualWidth = layout.visualWidth;
+      const rawRows = [];
+      let phrasePos = 0;
+
+      for (let r = 0; r < sampleRows; r++) {
+        const y = 1.25 - (r / (sampleRows - 1)) * 2.45;
+        const mask = [];
+        let hasText = false;
+
+        for (let c = 0; c < cols; c++) {
+          const x = -1.45 + (c / (cols - 1)) * 2.9;
+          const xx = x * 1.03;
+          const yy = y * 1.08;
+          const f = Math.pow(xx * xx + yy * yy - 1, 3) - xx * xx * Math.pow(yy, 3);
+          const inside = f <= 0;
+          mask.push(inside);
+          hasText = hasText || inside;
+        }
+
+        if (!hasText) continue;
+
+        let text = "";
+        const segments = [];
+        let start = -1;
+
+        for (let c = 0; c < cols; c++) {
+          if (mask[c]) {
+            text += phrase[phrasePos % phrase.length];
+            phrasePos += 1;
+            if (start === -1) start = c;
+          } else {
+            text += " ";
+            if (start !== -1) {
+              segments.push(makeHeartSegment(start, c - 1, cols, visualWidth));
+              start = -1;
+            }
+          }
+        }
+
+        if (start !== -1) {
+          segments.push(makeHeartSegment(start, cols - 1, cols, visualWidth));
+        }
+
+        rawRows.push({ text, segments });
+      }
+
+      const top = layout.top;
+      const bottom = layout.bottom;
+      return rawRows.map((row, i) => ({
+        y: top + (i / Math.max(1, rawRows.length - 1)) * (bottom - top),
+        text: row.text,
+        size: layout.fontSize,
+        segments: row.segments
+      }));
+    }
+
+    function getHeartLayout() {
+      const width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0, 320);
+      const height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0, 640);
+      const portraitPhone = width <= 560 && height > width * 1.12;
+      const landscapePhone = height <= 560 && width <= 960;
+      const tablet = !portraitPhone && !landscapePhone && width > 560 && width <= 900;
+      const fontSize = portraitPhone ? (width < 380 ? 8.8 : 9.6) : landscapePhone ? 8.9 : tablet ? 10.2 : 11.2;
+      const visualWidth = portraitPhone ? (width < 380 ? 90 : 92) : landscapePhone ? 88 : tablet ? 92 : 98;
+      const usableWidth = width * (portraitPhone ? 0.92 : landscapePhone ? 0.9 : tablet ? 0.94 : 0.96);
+      const charWidth = fontSize * (portraitPhone ? 0.68 : 0.66);
+      const cols = Math.max(portraitPhone ? 44 : landscapePhone ? 74 : 96, Math.min(184, Math.floor(usableWidth / charWidth)));
+      const sampleRows = portraitPhone ? (width < 380 ? 24 : 26) : landscapePhone ? 30 : tablet ? 40 : 42;
+
+      let top = 15.5;
+      let bottom = 84.5;
+      if (portraitPhone || landscapePhone) {
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+        const targetRatio = portraitPhone ? 0.72 : 0.42;
+        const minHeight = portraitPhone ? 28 : 54;
+        const maxHeight = portraitPhone ? 36 : 72;
+        const heightPct = clamp(((width * visualWidth / 100) * targetRatio / height) * 100, minHeight, maxHeight);
+        const centerY = portraitPhone ? 51 : 50;
+        top = centerY - heightPct / 2;
+        bottom = centerY + heightPct / 2;
+      }
+
+      return { cols, sampleRows, visualWidth, fontSize, top, bottom };
+    }
+
+    function makeHeartSegment(start, end, cols, visualWidth) {
+      const left = start / cols;
+      const right = (end + 1) / cols;
+      return {
+        center: 50 - visualWidth / 2 + ((left + right) / 2) * visualWidth,
+        width: Math.max(2, (right - left) * visualWidth)
+      };
+    }
+
+    let resizeTimer = 0;
+    window.addEventListener("resize", () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (!heartRows.length || !heartText.children.length) return;
+
+        heartRows = buildHeartRows();
+        heartText.querySelectorAll(".heart-line").forEach((line) => {
+          const index = Number(line.dataset.row);
+          const row = heartRows[index];
+          if (!row) {
+            line.remove();
+            return;
+          }
+
+          line.textContent = row.text;
+          line.style.top = `${row.y}%`;
+          line.style.fontSize = `${row.size}px`;
+        });
+      }, 160);
+    });
+
+    letters.forEach(makeStar);
   </script>
 </body>
 </html>
