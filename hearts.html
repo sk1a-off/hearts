@@ -168,6 +168,10 @@
     }
 
     .heart-text {
+      --heart-mask-w: 90%;
+      --heart-mask-h: 42%;
+      --heart-mask-y: 51%;
+      --heart-mask-url: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%2090'%3E%3Cpath%20fill='white'%20d='M50%2082C20%2060%205%2044%205%2025C5%2011%2016%204%2029%204C39%204%2047%2010%2050%2019C53%2010%2061%204%2071%204C84%204%2095%2011%2095%2025C95%2044%2080%2060%2050%2082Z'/%3E%3C/svg%3E");
       position: absolute;
       inset: 0;
       transform: scale(.92);
@@ -177,6 +181,14 @@
       z-index: 3;
       filter: brightness(1) saturate(1) hue-rotate(0deg) drop-shadow(0 0 13px rgba(153, 52, 72, .35));
       transition: opacity 900ms ease, transform 1200ms cubic-bezier(.2,.7,.2,1);
+      -webkit-mask-image: var(--heart-mask-url);
+      mask-image: var(--heart-mask-url);
+      -webkit-mask-repeat: no-repeat;
+      mask-repeat: no-repeat;
+      -webkit-mask-size: var(--heart-mask-w) var(--heart-mask-h);
+      mask-size: var(--heart-mask-w) var(--heart-mask-h);
+      -webkit-mask-position: 50% var(--heart-mask-y);
+      mask-position: 50% var(--heart-mask-y);
     }
 
     .heart-text.revealing,
@@ -272,14 +284,87 @@
       z-index: 20;
     }
 
-    @media (max-width: 560px) {
+    @keyframes heart-pulse-mobile {
+      0%, 100% {
+        transform: scale(1);
+        opacity: .96;
+      }
+      38% {
+        transform: scale(1.022);
+        opacity: 1;
+      }
+      52% {
+        transform: scale(1.036);
+        opacity: 1;
+      }
+      68% {
+        transform: scale(1.016);
+        opacity: .98;
+      }
+    }
+
+    @keyframes heart-color-mobile {
+      0%, 100% {
+        color: #f3a4bd;
+        text-shadow: 0 0 4px rgba(210, 110, 140, .18);
+      }
+      35% {
+        color: #ffc1d3;
+        text-shadow: 0 0 7px rgba(255, 176, 204, .26);
+      }
+      50% {
+        color: #fff0f5;
+        text-shadow: 0 0 10px rgba(255, 196, 214, .34);
+      }
+      70% {
+        color: #ffd2bf;
+        text-shadow: 0 0 7px rgba(255, 184, 150, .24);
+      }
+    }
+
+    @media (max-width: 560px), (hover: none) and (pointer: coarse) {
+      .comet {
+        box-shadow: 0 0 10px rgba(196, 220, 249, .62), 0 0 20px rgba(151, 187, 231, .24);
+      }
+
+      .trail-dot {
+        filter: none;
+        mix-blend-mode: normal;
+      }
+
+      .particle {
+        width: 4px;
+        height: 4px;
+        box-shadow: none;
+        animation-duration: 900ms;
+      }
+
+      .wave {
+        box-shadow: none;
+        animation-duration: 1000ms;
+      }
+
       .heart-text {
-        filter: drop-shadow(0 0 9px rgba(153, 52, 72, .32));
+        filter: none;
+      }
+
+      .heart-text.show {
+        animation: heart-pulse-mobile 4600ms ease-in-out 900ms infinite;
       }
 
       .heart-line {
-        letter-spacing: .015em;
+        letter-spacing: .005em;
         text-shadow: 0 0 4px rgba(210, 110, 140, .18);
+      }
+
+      .heart-text.show .heart-line {
+        animation: heart-color-mobile 4600ms ease-in-out 900ms infinite;
+        opacity: 1;
+      }
+
+      .status {
+        backdrop-filter: none;
+        background: rgba(8, 19, 37, .66);
       }
     }
   </style>
@@ -314,6 +399,8 @@
 
     const stars = [];
     const comets = [];
+    const coarsePointerQuery = window.matchMedia ? window.matchMedia("(hover: none) and (pointer: coarse)") : null;
+    let lowPowerMode = false;
 
     function makeStar(letter, i) {
       const btn = document.createElement("button");
@@ -476,6 +563,9 @@
 
     function tick(now) {
       const dt = Math.min(0.05, (now - lastFrame) / 1000);
+      const lowPower = lowPowerMode;
+      const trailInterval = lowPower ? 150 : 56;
+      const maxTrail = lowPower ? 5 : 14;
       lastFrame = now;
       let alive = 0;
 
@@ -530,10 +620,11 @@
         c.el.style.top = `${c.y}%`;
         c.el.style.transform = `translate(-50%, -50%) rotate(${ang.toFixed(1)}deg)`;
 
-        if (speed > 0.004 && (now - c.lastTrailMs) > 24) {
+        const shouldRenderTrail = !lowPower || c.state !== "orbit";
+        if (shouldRenderTrail && speed > 0.004 && (now - c.lastTrailMs) > trailInterval) {
           c.trail.push({ x: c.x, y: c.y });
-          if (c.trail.length > 20) c.trail.shift();
-          renderTrail(c.trail);
+          if (c.trail.length > maxTrail) c.trail.shift();
+          renderTrail(c.trail, lowPower);
           c.lastTrailMs = now;
         }
 
@@ -567,43 +658,62 @@
       return Math.min(1, Math.max(0, 0.72 * t + 0.28 * smoother(t)));
     }
 
-    function renderTrail(trail) {
+    function updateLowPowerMode() {
+      const width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0, 320);
+      const height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0, 640);
+      const coarsePointer = coarsePointerQuery ? coarsePointerQuery.matches : false;
+      lowPowerMode = coarsePointer || width <= 560 || (height <= 560 && width <= 960);
+      return lowPowerMode;
+    }
+
+    function renderTrail(trail, lowPower) {
       const n = trail.length;
-      for (let i = 0; i < n; i++) {
+      const start = lowPower ? n - 1 : Math.max(0, n - 4);
+      const ttl = lowPower ? 300 : 420;
+
+      for (let i = start; i < n; i++) {
         const p = trail[i];
-        const k = i / Math.max(1, n - 1);
+        const k = lowPower ? 1 : i / Math.max(1, n - 1);
         const d = document.createElement("span");
         d.className = "trail-dot";
         d.style.left = `${p.x}%`;
         d.style.top = `${p.y}%`;
-        d.style.setProperty("--s", `${(4 + k * 16).toFixed(2)}px`);
-        d.style.setProperty("--b", `${(0.8 + k * 3.2).toFixed(2)}px`);
-        d.style.setProperty("--o", `${(0.08 + k * 0.55).toFixed(3)}`);
+        d.style.setProperty("--s", `${(lowPower ? 10 + k * 8 : 4 + k * 16).toFixed(2)}px`);
+        d.style.setProperty("--b", `${(lowPower ? 0 : 0.8 + k * 3.2).toFixed(2)}px`);
+        d.style.setProperty("--o", `${(lowPower ? 0.22 : 0.08 + k * 0.55).toFixed(3)}`);
         sky.appendChild(d);
-        setTimeout(() => d.remove(), 440);
+        setTimeout(() => d.remove(), ttl);
       }
     }
 
     function explode(x, y, count) {
+      const lowPower = lowPowerMode;
+      const particleCount = lowPower ? Math.min(count, count > 30 ? 12 : 8) : count;
+      const particleLife = lowPower ? 960 : 1400;
+      const minRadius = lowPower ? 18 : 26;
+      const radiusSpread = lowPower ? 48 : 84;
+      const fragment = document.createDocumentFragment();
       const wave = document.createElement("span");
       wave.className = "wave";
       wave.style.left = `${x}%`;
       wave.style.top = `${y}%`;
-      sky.appendChild(wave);
+      fragment.appendChild(wave);
       setTimeout(() => wave.remove(), 1450);
 
-      for (let i = 0; i < count; i++) {
+      for (let i = 0; i < particleCount; i++) {
         const p = document.createElement("span");
         p.className = "particle";
         p.style.left = `${x}%`;
         p.style.top = `${y}%`;
         const a = Math.random() * Math.PI * 2;
-        const r = 26 + Math.random() * 84;
+        const r = minRadius + Math.random() * radiusSpread;
         p.style.setProperty("--dx", `${(Math.cos(a) * r).toFixed(1)}px`);
         p.style.setProperty("--dy", `${(Math.sin(a) * r).toFixed(1)}px`);
-        sky.appendChild(p);
-        setTimeout(() => p.remove(), 1400);
+        fragment.appendChild(p);
+        setTimeout(() => p.remove(), particleLife);
       }
+
+      sky.appendChild(fragment);
     }
 
     function makeHeartChunks(chunkCount) {
@@ -718,62 +828,63 @@
     function buildHeartRows() {
       const phrase = "Я ЛЮБЛЮ ТЕБЯ ";
       const layout = getHeartLayout();
-      const cols = layout.cols;
-      const sampleRows = layout.sampleRows;
-      const visualWidth = layout.visualWidth;
-      const rawRows = [];
+      const rows = [];
       let phrasePos = 0;
 
-      for (let r = 0; r < sampleRows; r++) {
-        const y = 1.25 - (r / (sampleRows - 1)) * 2.45;
-        const mask = [];
-        let hasText = false;
+      applyHeartMaskLayout(layout);
 
-        for (let c = 0; c < cols; c++) {
-          const x = -1.45 + (c / (cols - 1)) * 2.9;
-          const xx = x * 1.03;
-          const yy = y * 1.08;
-          const f = Math.pow(xx * xx + yy * yy - 1, 3) - xx * xx * Math.pow(yy, 3);
-          const inside = f <= 0;
-          mask.push(inside);
-          hasText = hasText || inside;
-        }
-
-        if (!hasText) continue;
-
+      const makeText = (len) => {
         let text = "";
-        const segments = [];
-        let start = -1;
-
-        for (let c = 0; c < cols; c++) {
-          if (mask[c]) {
-            text += phrase[phrasePos % phrase.length];
-            phrasePos += 1;
-            if (start === -1) start = c;
-          } else {
-            text += " ";
-            if (start !== -1) {
-              segments.push(makeHeartSegment(start, c - 1, cols, visualWidth));
-              start = -1;
-            }
-          }
+        for (let i = 0; i < len; i++) {
+          text += phrase[phrasePos % phrase.length];
+          phrasePos += 1;
         }
+        return text;
+      };
 
-        if (start !== -1) {
-          segments.push(makeHeartSegment(start, cols - 1, cols, visualWidth));
-        }
+      for (let r = 0; r < layout.sampleRows; r++) {
+        const progress = r / Math.max(1, layout.sampleRows - 1);
+        const y = layout.top + progress * (layout.bottom - layout.top);
+        const curveY = 1.25 - progress * 2.45;
 
-        rawRows.push({ text, segments });
+        rows.push({
+          y,
+          text: makeText(layout.cols),
+          size: layout.fontSize,
+          segments: makeImplicitHeartSegments(curveY, layout.visualWidth)
+        });
       }
 
-      const top = layout.top;
-      const bottom = layout.bottom;
-      return rawRows.map((row, i) => ({
-        y: top + (i / Math.max(1, rawRows.length - 1)) * (bottom - top),
-        text: row.text,
-        size: layout.fontSize,
-        segments: row.segments
-      }));
+      return rows;
+    }
+
+    function applyHeartMaskLayout(layout) {
+      heartText.style.setProperty("--heart-mask-w", `${layout.visualWidth}%`);
+      heartText.style.setProperty("--heart-mask-h", `${(layout.bottom - layout.top).toFixed(2)}%`);
+      heartText.style.setProperty("--heart-mask-y", `${((layout.top + layout.bottom) / 2).toFixed(2)}%`);
+    }
+
+    function makeImplicitHeartSegments(curveY, visualWidth) {
+      const sampleCols = 140;
+      const segments = [];
+      let start = -1;
+
+      for (let c = 0; c < sampleCols; c++) {
+        const x = -1.45 + (c / (sampleCols - 1)) * 2.9;
+        const xx = x * 1.03;
+        const yy = curveY * 1.08;
+        const f = Math.pow(xx * xx + yy * yy - 1, 3) - xx * xx * Math.pow(yy, 3);
+        const inside = f <= 0.025;
+
+        if (inside && start === -1) start = c;
+        if ((!inside || c === sampleCols - 1) && start !== -1) {
+          const end = inside && c === sampleCols - 1 ? c : c - 1;
+          segments.push(makeHeartSegment(start, end, sampleCols, visualWidth));
+          start = -1;
+        }
+      }
+
+      return segments.length ? segments : [{ center: 50, width: 2 }];
     }
 
     function getHeartLayout() {
@@ -782,27 +893,27 @@
       const portraitPhone = width <= 560 && height > width * 1.12;
       const landscapePhone = height <= 560 && width <= 960;
       const tablet = !portraitPhone && !landscapePhone && width > 560 && width <= 900;
-      const fontSize = portraitPhone ? (width < 380 ? 8.8 : 9.6) : landscapePhone ? 8.9 : tablet ? 10.2 : 11.2;
-      const visualWidth = portraitPhone ? (width < 380 ? 90 : 92) : landscapePhone ? 88 : tablet ? 92 : 98;
-      const usableWidth = width * (portraitPhone ? 0.92 : landscapePhone ? 0.9 : tablet ? 0.94 : 0.96);
-      const charWidth = fontSize * (portraitPhone ? 0.68 : 0.66);
-      const cols = Math.max(portraitPhone ? 44 : landscapePhone ? 74 : 96, Math.min(184, Math.floor(usableWidth / charWidth)));
-      const sampleRows = portraitPhone ? (width < 380 ? 24 : 26) : landscapePhone ? 30 : tablet ? 40 : 42;
+      const fontSize = portraitPhone ? (width < 380 ? 9.1 : 10) : landscapePhone ? 8.9 : tablet ? 10.2 : 11.2;
+      const visualWidth = portraitPhone ? (width < 380 ? 94 : 96) : landscapePhone ? 88 : tablet ? 92 : 98;
+      const usableWidth = width * (portraitPhone ? 0.94 : landscapePhone ? 0.9 : tablet ? 0.94 : 0.96);
+      const charWidth = fontSize * (portraitPhone ? 0.6 : 0.66);
+      const cols = Math.max(portraitPhone ? 50 : landscapePhone ? 74 : 96, Math.min(184, Math.floor(usableWidth / charWidth)));
+      const sampleRows = portraitPhone ? 22 : landscapePhone ? 30 : tablet ? 40 : 42;
 
       let top = 15.5;
       let bottom = 84.5;
       if (portraitPhone || landscapePhone) {
         const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
         const targetRatio = portraitPhone ? 0.72 : 0.42;
-        const minHeight = portraitPhone ? 28 : 54;
-        const maxHeight = portraitPhone ? 36 : 72;
+        const minHeight = portraitPhone ? 30 : 54;
+        const maxHeight = portraitPhone ? 38 : 72;
         const heightPct = clamp(((width * visualWidth / 100) * targetRatio / height) * 100, minHeight, maxHeight);
         const centerY = portraitPhone ? 51 : 50;
         top = centerY - heightPct / 2;
         bottom = centerY + heightPct / 2;
       }
 
-      return { cols, sampleRows, visualWidth, fontSize, top, bottom };
+      return { cols, sampleRows, visualWidth, fontSize, top, bottom, mobileProfile: portraitPhone };
     }
 
     function makeHeartSegment(start, end, cols, visualWidth) {
@@ -818,6 +929,7 @@
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
+        updateLowPowerMode();
         if (!heartRows.length || !heartText.children.length) return;
 
         heartRows = buildHeartRows();
@@ -836,6 +948,7 @@
       }, 160);
     });
 
+    updateLowPowerMode();
     letters.forEach(makeStar);
   </script>
 </body>
