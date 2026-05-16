@@ -38,6 +38,7 @@
     }
 
     .stars-bg {
+      z-index: 0;
       background-image:
         radial-gradient(1.7px 1.7px at 8% 17%, rgba(255,255,255,.84) 45%, transparent 50%),
         radial-gradient(1.5px 1.5px at 25% 36%, rgba(255,255,255,.74) 45%, transparent 50%),
@@ -50,15 +51,164 @@
       animation: sky-twinkle 5.2s ease-in-out infinite alternate;
     }
 
+    .stars-bg::before {
+      background-image:
+        radial-gradient(1px 1px at 4% 52%, rgba(255,255,255,.55) 45%, transparent 50%),
+        radial-gradient(1px 1px at 12% 86%, rgba(210,229,255,.48) 45%, transparent 50%),
+        radial-gradient(1px 1px at 18% 64%, rgba(255,255,255,.42) 45%, transparent 50%),
+        radial-gradient(1px 1px at 28% 8%, rgba(236,246,255,.6) 45%, transparent 50%),
+        radial-gradient(1px 1px at 45% 72%, rgba(255,255,255,.46) 45%, transparent 50%),
+        radial-gradient(1px 1px at 64% 62%, rgba(203,225,255,.5) 45%, transparent 50%),
+        radial-gradient(1px 1px at 76% 11%, rgba(255,255,255,.52) 45%, transparent 50%),
+        radial-gradient(1px 1px at 92% 78%, rgba(227,240,255,.42) 45%, transparent 50%);
+      opacity: .9;
+      animation: star-drift 42s linear infinite;
+    }
+
+    .stars-bg::after {
+      background:
+        radial-gradient(ellipse at 48% 38%, rgba(185, 218, 255, .12), transparent 32%),
+        radial-gradient(ellipse at 30% 58%, rgba(244, 176, 211, .06), transparent 34%),
+        linear-gradient(112deg, transparent 8%, rgba(126, 178, 255, .08) 35%, rgba(250, 181, 218, .05) 51%, transparent 72%);
+      opacity: .86;
+      mix-blend-mode: screen;
+    }
+
     @keyframes sky-twinkle {
       0%, 100% { opacity: .75; }
       50% { opacity: 1; }
+    }
+
+    @keyframes star-drift {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(-18px, 14px, 0); }
+    }
+
+    .atmosphere {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .atmosphere::before {
+      content: "";
+      position: absolute;
+      width: 128vw;
+      height: 48vh;
+      left: -14vw;
+      top: 8vh;
+      background:
+        radial-gradient(ellipse at 26% 42%, rgba(87, 148, 255, .2), transparent 42%),
+        radial-gradient(ellipse at 58% 52%, rgba(255, 156, 205, .11), transparent 44%),
+        radial-gradient(ellipse at 82% 38%, rgba(127, 236, 255, .09), transparent 36%);
+      opacity: .75;
+      transform: rotate(-8deg);
+      animation: nebula-breathe 24s ease-in-out infinite alternate;
+    }
+
+    .atmosphere::after {
+      content: "";
+      position: absolute;
+      left: -12vw;
+      right: -12vw;
+      bottom: -11vh;
+      height: 34vh;
+      background:
+        radial-gradient(ellipse at 18% 60%, rgba(150, 184, 229, .18), transparent 54%),
+        radial-gradient(ellipse at 52% 42%, rgba(230, 242, 255, .13), transparent 50%),
+        radial-gradient(ellipse at 84% 65%, rgba(102, 154, 221, .18), transparent 56%);
+      opacity: .8;
+    }
+
+    .moon {
+      position: fixed;
+      top: clamp(28px, 8vh, 82px);
+      right: clamp(24px, 8vw, 118px);
+      width: clamp(58px, 7vw, 96px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 28%, rgba(255,255,255,.95), rgba(236,244,255,.94) 36%, rgba(184, 207, 237, .88) 100%);
+      box-shadow:
+        0 0 26px rgba(210, 229, 255, .36),
+        0 0 74px rgba(116, 169, 255, .22);
+      pointer-events: none;
+      z-index: 1;
+      opacity: .9;
+    }
+
+    .moon::before {
+      content: "";
+      position: absolute;
+      inset: 12%;
+      border-radius: inherit;
+      background:
+        radial-gradient(circle at 30% 34%, rgba(116, 139, 171, .16) 0 7%, transparent 8%),
+        radial-gradient(circle at 64% 30%, rgba(116, 139, 171, .12) 0 9%, transparent 10%),
+        radial-gradient(circle at 55% 67%, rgba(116, 139, 171, .14) 0 11%, transparent 12%);
+      opacity: .85;
+    }
+
+    .shooting-star {
+      position: fixed;
+      width: clamp(78px, 13vw, 150px);
+      height: 1px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, transparent, rgba(234, 246, 255, .12), rgba(255, 255, 255, .88));
+      box-shadow: 0 0 10px rgba(185, 220, 255, .58);
+      transform: rotate(-28deg);
+      transform-origin: right center;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      animation: shooting-star 11s linear infinite;
+    }
+
+    .shooting-star::after {
+      content: "";
+      position: absolute;
+      right: -2px;
+      top: 50%;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.95);
+      transform: translateY(-50%);
+      box-shadow: 0 0 12px rgba(220, 238, 255, .9);
+    }
+
+    .shooting-star.s1 { top: 18%; left: 92%; animation-delay: 1.8s; }
+    .shooting-star.s2 { top: 34%; left: 104%; animation-delay: 6.4s; animation-duration: 14s; }
+    .shooting-star.s3 { top: 10%; left: 76%; animation-delay: 10.2s; animation-duration: 16s; }
+
+    @keyframes nebula-breathe {
+      0% { opacity: .52; transform: translate3d(-1.5vw, -1vh, 0) rotate(-8deg); }
+      100% { opacity: .82; transform: translate3d(1.5vw, 1vh, 0) rotate(-6deg); }
+    }
+
+    @keyframes shooting-star {
+      0%, 70% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-28deg); }
+      73% { opacity: .95; }
+      84% { opacity: .72; }
+      100% { opacity: 0; transform: translate3d(-82vw, 48vh, 0) rotate(-28deg); }
     }
 
     .sky {
       position: fixed;
       inset: 0;
       overflow: hidden;
+      z-index: 2;
+    }
+
+    .fx-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 5;
     }
 
     .star {
@@ -89,20 +239,25 @@
 
     .star .letter {
       position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
+      left: 50%;
+      top: 50%;
+      width: 1.55em;
+      height: 1.55em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       font-weight: 800;
       font-size: clamp(.9rem, 3.2vw, 1.05rem);
+      line-height: 1;
       color: #152747;
       opacity: 0;
-      transform: translateY(8px);
+      transform: translate(-50%, calc(-50% + 8px));
       transition: opacity .4s ease, transform .4s ease;
     }
 
     .star.revealed .letter {
       opacity: 1;
-      transform: translateY(0);
+      transform: translate(-50%, -50%);
     }
 
     .star.revealed .star-shape {
@@ -168,38 +323,81 @@
     }
 
     .heart-text {
+      position: absolute;
+      inset: 0;
+      transform-origin: 50% 52%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+      transition: opacity 900ms ease;
+    }
+
+    .heart-mask-layer {
       --heart-mask-w: 90%;
       --heart-mask-h: 42%;
       --heart-mask-y: 51%;
       --heart-mask-url: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%2090'%3E%3Cpath%20fill='white'%20d='M50%2082C20%2060%205%2044%205%2025C5%2011%2016%204%2029%204C39%204%2047%2010%2050%2019C53%2010%2061%204%2071%204C84%204%2095%2011%2095%2025C95%2044%2080%2060%2050%2082Z'/%3E%3C/svg%3E");
       position: absolute;
-      inset: 0;
-      transform: scale(.92);
-      transform-origin: 50% 52%;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 3;
+      left: 50%;
+      top: var(--heart-mask-y);
+      width: var(--heart-mask-w);
+      height: var(--heart-mask-h);
+      transform: translate(-50%, -50%);
+      transform-origin: 50% 50%;
       filter: brightness(1) saturate(1) hue-rotate(0deg) drop-shadow(0 0 13px rgba(153, 52, 72, .35));
-      transition: opacity 900ms ease, transform 1200ms cubic-bezier(.2,.7,.2,1);
       -webkit-mask-image: var(--heart-mask-url);
       mask-image: var(--heart-mask-url);
       -webkit-mask-repeat: no-repeat;
       mask-repeat: no-repeat;
-      -webkit-mask-size: var(--heart-mask-w) var(--heart-mask-h);
-      mask-size: var(--heart-mask-w) var(--heart-mask-h);
-      -webkit-mask-position: 50% var(--heart-mask-y);
-      mask-position: 50% var(--heart-mask-y);
+      -webkit-mask-size: 100% 100%;
+      mask-size: 100% 100%;
+      -webkit-mask-position: center;
+      mask-position: center;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
     }
 
     .heart-text.revealing,
     .heart-text.show {
       opacity: 1;
-      transform: scale(1);
     }
 
     .heart-text.show {
-      animation: heart-pulse 7200ms ease-in-out 1200ms infinite;
-      will-change: transform, filter;
+      will-change: opacity;
+    }
+
+    .heart-text.show .heart-mask-layer {
+      animation: heart-mask-pulse 6800ms cubic-bezier(.45, 0, .2, 1) 500ms infinite;
+      will-change: transform;
+    }
+
+    .heart-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .heart-row {
+      fill: #f3a4bd;
+      font-family: "DejaVu Sans Mono", "Cascadia Mono", "SFMono-Regular", "Courier New", monospace;
+      font-weight: 900;
+      letter-spacing: .03em;
+      text-anchor: middle;
+      dominant-baseline: middle;
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: svg-line-reveal 1600ms cubic-bezier(.2,.72,.2,1) forwards;
+      paint-order: stroke fill;
+      stroke: rgba(255, 210, 224, .16);
+      stroke-width: .25px;
+    }
+
+    .heart-text.show .heart-row {
+      opacity: 1;
+      animation: heart-row-color 7600ms ease-in-out 500ms infinite;
     }
 
     .heart-line {
@@ -239,28 +437,41 @@
       100% { opacity: 1; transform: translateX(-50%) scale(1); }
     }
 
+    @keyframes svg-line-reveal {
+      0% { opacity: 0; transform: scale(.94); }
+      60% { opacity: 1; transform: scale(1.008); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
     @keyframes wave-expand {
       0% { opacity: .9; transform: translate(-50%, -50%) scale(.2); }
       100% { opacity: 0; transform: translate(-50%, -50%) scale(8.5); }
     }
 
-    @keyframes heart-pulse {
+    @keyframes heart-mask-pulse {
       0%, 100% {
-        transform: scale(1);
-        filter: brightness(1) saturate(1) hue-rotate(0deg) drop-shadow(0 0 13px rgba(153, 52, 72, .32));
+        transform: translate3d(-50%, -50%, 0) scale(1);
       }
-      25% {
-        transform: scale(1.006);
-        filter: brightness(1.045) saturate(1.08) hue-rotate(-3deg) drop-shadow(0 0 15px rgba(235, 139, 171, .36));
+      18% {
+        transform: translate3d(-50%, -50%, 0) scale(1.012);
       }
-      50% {
-        transform: scale(1.018);
-        filter: brightness(1.105) saturate(1.16) hue-rotate(7deg) drop-shadow(0 0 20px rgba(255, 157, 190, .44));
+      42% {
+        transform: translate3d(-50%, -50%, 0) scale(1.038);
       }
-      75% {
-        transform: scale(1.006);
-        filter: brightness(1.045) saturate(1.08) hue-rotate(3deg) drop-shadow(0 0 15px rgba(244, 170, 154, .36));
+      62% {
+        transform: translate3d(-50%, -50%, 0) scale(1.052);
       }
+      82% {
+        transform: translate3d(-50%, -50%, 0) scale(1.014);
+      }
+    }
+
+    @keyframes heart-row-color {
+      0%, 100% { fill: #f3a4bd; }
+      24% { fill: #f8b3c8; }
+      48% { fill: #ffd0dc; }
+      68% { fill: #ffc3d3; }
+      86% { fill: #f6aebf; }
     }
 
     .status {
@@ -284,45 +495,81 @@
       z-index: 20;
     }
 
-    @keyframes heart-pulse-mobile {
+    .quality-toggle {
+      position: fixed;
+      right: 14px;
+      bottom: calc(14px + env(safe-area-inset-bottom));
+      z-index: 21;
+      color: #eaf2ff;
+      font: 700 clamp(11px, 3.2vw, 14px)/1 "Segoe UI", sans-serif;
+      letter-spacing: .2px;
+      background: rgba(8, 19, 37, .42);
+      border: 1px solid rgba(178, 203, 236, .32);
+      border-radius: 999px;
+      padding: 9px 13px;
+      cursor: pointer;
+      backdrop-filter: blur(7px);
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    @keyframes heart-mask-pulse-mobile {
       0%, 100% {
-        transform: scale(1);
-        opacity: .96;
+        transform: translate3d(-50%, -50%, 0) scale(1);
+        filter: none;
       }
-      38% {
-        transform: scale(1.022);
-        opacity: 1;
+      24% {
+        transform: translate3d(-50%, -50%, 0) scale(1.012);
+        filter: none;
       }
       52% {
-        transform: scale(1.036);
-        opacity: 1;
+        transform: translate3d(-50%, -50%, 0) scale(1.042);
+        filter: none;
       }
-      68% {
-        transform: scale(1.016);
-        opacity: .98;
+      76% {
+        transform: translate3d(-50%, -50%, 0) scale(1.014);
+        filter: none;
       }
     }
 
-    @keyframes heart-color-mobile {
-      0%, 100% {
-        color: #f3a4bd;
-        text-shadow: 0 0 4px rgba(210, 110, 140, .18);
-      }
-      35% {
-        color: #ffc1d3;
-        text-shadow: 0 0 7px rgba(255, 176, 204, .26);
-      }
-      50% {
-        color: #fff0f5;
-        text-shadow: 0 0 10px rgba(255, 196, 214, .34);
-      }
-      70% {
-        color: #ffd2bf;
-        text-shadow: 0 0 7px rgba(255, 184, 150, .24);
-      }
+    @keyframes heart-row-color-mobile {
+      0%, 100% { fill: #f3a4bd; }
+      28% { fill: #f8b3c8; }
+      52% { fill: #ffd0dc; }
+      76% { fill: #f7b6c2; }
     }
 
     @media (max-width: 560px), (hover: none) and (pointer: coarse) {
+      .stars-bg::before {
+        animation: none;
+        opacity: .58;
+      }
+
+      .atmosphere::before {
+        animation: none;
+        opacity: .38;
+      }
+
+      .atmosphere::after {
+        opacity: .45;
+      }
+
+      .moon {
+        top: 34px;
+        right: 24px;
+        width: 54px;
+        opacity: .7;
+        box-shadow: 0 0 22px rgba(210, 229, 255, .24);
+      }
+
+      .shooting-star {
+        display: none;
+      }
+
+      .shooting-star.s1 {
+        display: block;
+        animation-duration: 18s;
+      }
+
       .comet {
         box-shadow: 0 0 10px rgba(196, 220, 249, .62), 0 0 20px rgba(151, 187, 231, .24);
       }
@@ -344,12 +591,17 @@
         animation-duration: 1000ms;
       }
 
-      .heart-text {
+      .heart-mask-layer {
         filter: none;
       }
 
-      .heart-text.show {
-        animation: heart-pulse-mobile 4600ms ease-in-out 900ms infinite;
+      .heart-text.show .heart-mask-layer {
+        animation: heart-mask-pulse-mobile 7200ms cubic-bezier(.45, 0, .2, 1) 500ms infinite;
+      }
+
+      .star .letter {
+        top: 50.5%;
+        font-size: clamp(.86rem, 3.6vw, 1rem);
       }
 
       .heart-line {
@@ -357,8 +609,13 @@
         text-shadow: 0 0 4px rgba(210, 110, 140, .18);
       }
 
-      .heart-text.show .heart-line {
-        animation: heart-color-mobile 4600ms ease-in-out 900ms infinite;
+      .heart-row {
+        letter-spacing: .005em;
+        stroke-width: 0;
+      }
+
+      .heart-text.show .heart-row {
+        animation: heart-row-color-mobile 7800ms ease-in-out 500ms infinite;
         opacity: 1;
       }
 
@@ -366,14 +623,52 @@
         backdrop-filter: none;
         background: rgba(8, 19, 37, .66);
       }
+
+      .quality-toggle {
+        right: 10px;
+        bottom: calc(58px + env(safe-area-inset-bottom));
+        padding: 8px 11px;
+        backdrop-filter: none;
+        background: rgba(8, 19, 37, .66);
+      }
+    }
+
+    body[data-quality="smooth"] .shooting-star:not(.s1) {
+      display: none;
+    }
+
+    body[data-quality="smooth"] .stars-bg::before,
+    body[data-quality="smooth"] .atmosphere::before {
+      animation: none;
+    }
+
+    body[data-quality="smooth"] .quality-toggle {
+      background: rgba(18, 38, 70, .72);
+    }
+
+    @media (max-width: 560px), (hover: none) and (pointer: coarse) {
+      body[data-quality="beauty"] .shooting-star {
+        display: block;
+      }
+
+      body[data-quality="beauty"] .atmosphere::before {
+        animation: nebula-breathe 24s ease-in-out infinite alternate;
+      }
     }
   </style>
 </head>
 <body>
   <div class="stars-bg" aria-hidden="true"></div>
+  <div class="atmosphere" aria-hidden="true"></div>
+  <div class="moon" aria-hidden="true"></div>
+  <span class="shooting-star s1" aria-hidden="true"></span>
+  <span class="shooting-star s2" aria-hidden="true"></span>
+  <span class="shooting-star s3" aria-hidden="true"></span>
   <main class="sky" id="sky" aria-label="Небо"></main>
+  <canvas class="fx-canvas" id="fxCanvas" aria-hidden="true"></canvas>
   <section class="heart-text" id="heartText" aria-label="Сердце из текста"></section>
   <div class="status" id="status">Нажимай на звезды · 0/10</div>
+  <button class="quality-toggle" id="qualityToggle" type="button" aria-label="Переключить качество">Режим: Плавно</button>
 
   <script>
     const letters = ["Я", "Л", "Ю", "Б", "Л", "Ю", "Т", "Е", "Б", "Я"];
@@ -385,6 +680,9 @@
     const sky = document.getElementById("sky");
     const status = document.getElementById("status");
     const heartText = document.getElementById("heartText");
+    const fxCanvas = document.getElementById("fxCanvas");
+    const fxCtx = fxCanvas.getContext("2d");
+    const qualityToggle = document.getElementById("qualityToggle");
 
     let opened = 0;
     let assembling = false;
@@ -396,10 +694,19 @@
     let heartRows = [];
     let heartRowCursor = 0;
     let revealedHeartRows = new Set();
+    let heartMaskLayer = null;
+    let heartRowsLayer = null;
+    let fxW = 0;
+    let fxH = 0;
+    let fxDpr = 1;
+    let fxHandle = null;
+    let fxLastFrame = performance.now();
 
     const stars = [];
     const comets = [];
+    const fxParticles = [];
     const coarsePointerQuery = window.matchMedia ? window.matchMedia("(hover: none) and (pointer: coarse)") : null;
+    let qualityMode = "smooth";
     let lowPowerMode = false;
 
     function makeStar(letter, i) {
@@ -520,11 +827,11 @@
       if (assembling) return;
       assembling = true;
       arrivedToHeart = 0;
-      heartRows = buildHeartRows();
       heartRowCursor = 0;
       revealedHeartRows = new Set();
-      heartText.innerHTML = "";
       heartText.classList.remove("show");
+      resetHeartSvg();
+      heartRows = buildHeartRows();
       heartText.classList.add("revealing");
 
       const chunks = makeHeartChunks(comets.length);
@@ -658,62 +965,162 @@
       return Math.min(1, Math.max(0, 0.72 * t + 0.28 * smoother(t)));
     }
 
-    function updateLowPowerMode() {
-      const width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0, 320);
-      const height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0, 640);
+    function initQualityMode() {
+      let saved = "";
+      try {
+        saved = localStorage.getItem("loveQuality") || "";
+      } catch (_) {
+        saved = "";
+      }
       const coarsePointer = coarsePointerQuery ? coarsePointerQuery.matches : false;
-      lowPowerMode = coarsePointer || width <= 560 || (height <= 560 && width <= 960);
+      qualityMode = saved || (coarsePointer ? "smooth" : "beauty");
+      applyQualityMode();
+    }
+
+    function applyQualityMode() {
+      document.body.dataset.quality = qualityMode;
+      qualityToggle.textContent = `Режим: ${qualityMode === "smooth" ? "Плавно" : "Красиво"}`;
+      qualityToggle.setAttribute("aria-pressed", qualityMode === "smooth" ? "true" : "false");
+      updateLowPowerMode();
+      resizeFxCanvas();
+    }
+
+    qualityToggle.addEventListener("click", () => {
+      qualityMode = qualityMode === "smooth" ? "beauty" : "smooth";
+      try {
+        localStorage.setItem("loveQuality", qualityMode);
+      } catch (_) {}
+      applyQualityMode();
+    });
+
+    function updateLowPowerMode() {
+      lowPowerMode = qualityMode === "smooth";
       return lowPowerMode;
+    }
+
+    function resizeFxCanvas() {
+      fxW = window.innerWidth || document.documentElement.clientWidth || 320;
+      fxH = window.innerHeight || document.documentElement.clientHeight || 640;
+      fxDpr = Math.min(window.devicePixelRatio || 1, lowPowerMode ? 1.35 : 2);
+      fxCanvas.width = Math.ceil(fxW * fxDpr);
+      fxCanvas.height = Math.ceil(fxH * fxDpr);
+      fxCanvas.style.width = `${fxW}px`;
+      fxCanvas.style.height = `${fxH}px`;
+      fxCtx.setTransform(fxDpr, 0, 0, fxDpr, 0, 0);
+    }
+
+    function percentToCanvas(x, y) {
+      return { x: x * fxW / 100, y: y * fxH / 100 };
+    }
+
+    function addFxParticle(particle) {
+      fxParticles.push(particle);
+      if (!fxHandle) {
+        fxLastFrame = performance.now();
+        fxHandle = requestAnimationFrame(tickFx);
+      }
+    }
+
+    function tickFx(now) {
+      const dt = Math.min(0.04, (now - fxLastFrame) / 1000);
+      fxLastFrame = now;
+      fxCtx.clearRect(0, 0, fxW, fxH);
+
+      for (let i = fxParticles.length - 1; i >= 0; i--) {
+        const p = fxParticles[i];
+        p.age += dt;
+        if (p.age >= p.life) {
+          fxParticles.splice(i, 1);
+          continue;
+        }
+
+        p.x += (p.vx || 0) * dt;
+        p.y += (p.vy || 0) * dt;
+        p.vx *= p.drag || 1;
+        p.vy *= p.drag || 1;
+
+        const k = p.age / p.life;
+        const alpha = (p.alpha || 1) * (1 - k);
+        const size = p.size * (p.grow ? 1 + k * p.grow : 1);
+
+        fxCtx.globalAlpha = alpha;
+        fxCtx.fillStyle = p.color;
+        if (!lowPowerMode && p.glow) {
+          fxCtx.shadowColor = p.color;
+          fxCtx.shadowBlur = p.glow;
+        } else {
+          fxCtx.shadowBlur = 0;
+        }
+        fxCtx.beginPath();
+        fxCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+        fxCtx.fill();
+      }
+
+      fxCtx.globalAlpha = 1;
+      fxCtx.shadowBlur = 0;
+      fxCtx.shadowColor = "transparent";
+
+      if (fxParticles.length) fxHandle = requestAnimationFrame(tickFx);
+      else fxHandle = null;
     }
 
     function renderTrail(trail, lowPower) {
       const n = trail.length;
       const start = lowPower ? n - 1 : Math.max(0, n - 4);
-      const ttl = lowPower ? 300 : 420;
 
       for (let i = start; i < n; i++) {
         const p = trail[i];
         const k = lowPower ? 1 : i / Math.max(1, n - 1);
-        const d = document.createElement("span");
-        d.className = "trail-dot";
-        d.style.left = `${p.x}%`;
-        d.style.top = `${p.y}%`;
-        d.style.setProperty("--s", `${(lowPower ? 10 + k * 8 : 4 + k * 16).toFixed(2)}px`);
-        d.style.setProperty("--b", `${(lowPower ? 0 : 0.8 + k * 3.2).toFixed(2)}px`);
-        d.style.setProperty("--o", `${(lowPower ? 0.22 : 0.08 + k * 0.55).toFixed(3)}`);
-        sky.appendChild(d);
-        setTimeout(() => d.remove(), ttl);
+        const pt = percentToCanvas(p.x, p.y);
+        addFxParticle({
+          x: pt.x,
+          y: pt.y,
+          vx: 0,
+          vy: 0,
+          age: 0,
+          life: lowPower ? 0.36 : 0.55,
+          size: lowPower ? 4.8 + k * 5.2 : 3 + k * 9,
+          grow: lowPower ? 0.25 : 0.5,
+          alpha: lowPower ? 0.2 : 0.34 + k * 0.2,
+          color: lowPower ? "rgba(203,226,255,.72)" : "rgba(216,235,255,.82)",
+          glow: lowPower ? 0 : 12,
+          drag: 1
+        });
       }
     }
 
     function explode(x, y, count) {
       const lowPower = lowPowerMode;
-      const particleCount = lowPower ? Math.min(count, count > 30 ? 12 : 8) : count;
-      const particleLife = lowPower ? 960 : 1400;
-      const minRadius = lowPower ? 18 : 26;
-      const radiusSpread = lowPower ? 48 : 84;
-      const fragment = document.createDocumentFragment();
+      const particleCount = lowPower ? Math.min(count, count > 30 ? 14 : 9) : count;
+      const particleLife = lowPower ? 0.82 : 1.25;
+      const minSpeed = lowPower ? 28 : 40;
+      const speedSpread = lowPower ? 80 : 150;
+      const center = percentToCanvas(x, y);
       const wave = document.createElement("span");
       wave.className = "wave";
       wave.style.left = `${x}%`;
       wave.style.top = `${y}%`;
-      fragment.appendChild(wave);
+      sky.appendChild(wave);
       setTimeout(() => wave.remove(), 1450);
 
       for (let i = 0; i < particleCount; i++) {
-        const p = document.createElement("span");
-        p.className = "particle";
-        p.style.left = `${x}%`;
-        p.style.top = `${y}%`;
         const a = Math.random() * Math.PI * 2;
-        const r = minRadius + Math.random() * radiusSpread;
-        p.style.setProperty("--dx", `${(Math.cos(a) * r).toFixed(1)}px`);
-        p.style.setProperty("--dy", `${(Math.sin(a) * r).toFixed(1)}px`);
-        fragment.appendChild(p);
-        setTimeout(() => p.remove(), particleLife);
+        const speed = minSpeed + Math.random() * speedSpread;
+        addFxParticle({
+          x: center.x,
+          y: center.y,
+          vx: Math.cos(a) * speed,
+          vy: Math.sin(a) * speed,
+          age: 0,
+          life: particleLife * (0.72 + Math.random() * 0.46),
+          size: lowPower ? 2.2 + Math.random() * 2.6 : 2.6 + Math.random() * 3.8,
+          grow: lowPower ? 0.15 : 0.3,
+          alpha: lowPower ? 0.72 : 0.9,
+          color: Math.random() > 0.35 ? "rgba(242,248,255,.95)" : "rgba(255,198,220,.9)",
+          glow: lowPower ? 0 : 11,
+          drag: 0.985
+        });
       }
-
-      sky.appendChild(fragment);
     }
 
     function makeHeartChunks(chunkCount) {
@@ -793,6 +1200,24 @@
       return out;
     }
 
+    function resetHeartSvg() {
+      const svgNS = "http://www.w3.org/2000/svg";
+      heartText.innerHTML = "";
+      heartMaskLayer = document.createElement("div");
+      heartMaskLayer.className = "heart-mask-layer";
+
+      const svg = document.createElementNS(svgNS, "svg");
+      svg.classList.add("heart-svg");
+      svg.setAttribute("aria-hidden", "true");
+      svg.setAttribute("focusable", "false");
+
+      heartRowsLayer = document.createElementNS(svgNS, "g");
+      heartRowsLayer.classList.add("heart-rows");
+      svg.appendChild(heartRowsLayer);
+      heartMaskLayer.appendChild(svg);
+      heartText.appendChild(heartMaskLayer);
+    }
+
     function revealHeartChunk(points, ex, ey) {
       const rowsPerBlast = Math.max(3, Math.ceil(heartRows.length / Math.max(1, letters.length)));
       const picked = Array.from(new Set((points || []).map((p) => p.row)))
@@ -810,16 +1235,16 @@
 
       picked.sort((a, b) => a - b).forEach((i, order) => {
         const row = heartRows[i];
-        const n = document.createElement("span");
-        n.className = "heart-line";
+        const n = document.createElementNS("http://www.w3.org/2000/svg", "text");
+        n.classList.add("heart-row");
         n.textContent = row.text;
         n.dataset.row = i;
-        n.style.left = "50%";
-        n.style.top = `${row.y}%`;
+        n.setAttribute("x", "50%");
+        n.setAttribute("y", `${row.localY ?? row.y}%`);
         const d = Math.hypot(50 - ex, row.y - ey);
         n.style.animationDelay = `${(0.03 + d * 0.012 + order * 0.045).toFixed(3)}s`;
         n.style.fontSize = `${row.size}px`;
-        heartText.appendChild(n);
+        (heartRowsLayer || heartText).appendChild(n);
         revealedHeartRows.add(i);
       });
       heartRowCursor = revealedHeartRows.size;
@@ -846,9 +1271,11 @@
         const progress = r / Math.max(1, layout.sampleRows - 1);
         const y = layout.top + progress * (layout.bottom - layout.top);
         const curveY = 1.25 - progress * 2.45;
+        const localY = 6 + progress * 88;
 
         rows.push({
           y,
+          localY,
           text: makeText(layout.cols),
           size: layout.fontSize,
           segments: makeImplicitHeartSegments(curveY, layout.visualWidth)
@@ -859,9 +1286,10 @@
     }
 
     function applyHeartMaskLayout(layout) {
-      heartText.style.setProperty("--heart-mask-w", `${layout.visualWidth}%`);
-      heartText.style.setProperty("--heart-mask-h", `${(layout.bottom - layout.top).toFixed(2)}%`);
-      heartText.style.setProperty("--heart-mask-y", `${((layout.top + layout.bottom) / 2).toFixed(2)}%`);
+      const target = heartMaskLayer || heartText;
+      target.style.setProperty("--heart-mask-w", `${layout.visualWidth}%`);
+      target.style.setProperty("--heart-mask-h", `${(layout.bottom - layout.top).toFixed(2)}%`);
+      target.style.setProperty("--heart-mask-y", `${((layout.top + layout.bottom) / 2).toFixed(2)}%`);
     }
 
     function makeImplicitHeartSegments(curveY, visualWidth) {
@@ -930,10 +1358,12 @@
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(() => {
         updateLowPowerMode();
+        resizeFxCanvas();
         if (!heartRows.length || !heartText.children.length) return;
 
         heartRows = buildHeartRows();
-        heartText.querySelectorAll(".heart-line").forEach((line) => {
+        applyHeartMaskLayout(getHeartLayout());
+        heartText.querySelectorAll(".heart-row").forEach((line) => {
           const index = Number(line.dataset.row);
           const row = heartRows[index];
           if (!row) {
@@ -942,13 +1372,13 @@
           }
 
           line.textContent = row.text;
-          line.style.top = `${row.y}%`;
+          line.setAttribute("y", `${row.localY ?? row.y}%`);
           line.style.fontSize = `${row.size}px`;
         });
       }, 160);
     });
 
-    updateLowPowerMode();
+    initQualityMode();
     letters.forEach(makeStar);
   </script>
 </body>
