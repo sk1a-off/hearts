@@ -290,40 +290,8 @@
       pointer-events: none;
     }
 
-    .trail-dot {
-      position: absolute;
-      width: var(--s, 10px);
-      height: var(--s, 10px);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, rgba(222,236,255,.9), rgba(168,197,234,.45) 55%, rgba(141,171,214,0) 100%);
-      filter: blur(var(--b, 2px));
-      opacity: var(--o, .4);
-      mix-blend-mode: screen;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .particle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle, #f7fbff 0%, #cfe0f7 58%, #94b2d8 100%);
-      box-shadow: 0 0 10px rgba(175, 203, 237, .6);
-      animation: particle-fly 1350ms cubic-bezier(.14,.64,.2,1) forwards;
-      z-index: 7;
-      pointer-events: none;
-    }
-
-    @keyframes particle-fly {
-      0% { opacity: .95; transform: translate(-50%, -50%) scale(.72); }
-      100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.06); }
-    }
-
     .heart-text {
-      position: absolute;
+      position: fixed;
       inset: 0;
       transform-origin: 50% 52%;
       opacity: 0;
@@ -332,27 +300,18 @@
       transition: opacity 900ms ease;
     }
 
-    .heart-mask-layer {
-      --heart-mask-w: 90%;
-      --heart-mask-h: 42%;
-      --heart-mask-y: 51%;
-      --heart-mask-url: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%2090'%3E%3Cpath%20fill='white'%20d='M50%2082C20%2060%205%2044%205%2025C5%2011%2016%204%2029%204C39%204%2047%2010%2050%2019C53%2010%2061%204%2071%204C84%204%2095%2011%2095%2025C95%2044%2080%2060%2050%2082Z'/%3E%3C/svg%3E");
+    .heart-constellation {
+      --heart-w: 84%;
+      --heart-h: 32%;
+      --heart-y: 50%;
       position: absolute;
       left: 50%;
-      top: var(--heart-mask-y);
-      width: var(--heart-mask-w);
-      height: var(--heart-mask-h);
+      top: var(--heart-y);
+      width: var(--heart-w);
+      height: var(--heart-h);
       transform: translate(-50%, -50%);
       transform-origin: 50% 50%;
-      filter: brightness(1) saturate(1) hue-rotate(0deg) drop-shadow(0 0 13px rgba(153, 52, 72, .35));
-      -webkit-mask-image: var(--heart-mask-url);
-      mask-image: var(--heart-mask-url);
-      -webkit-mask-repeat: no-repeat;
-      mask-repeat: no-repeat;
-      -webkit-mask-size: 100% 100%;
-      mask-size: 100% 100%;
-      -webkit-mask-position: center;
-      mask-position: center;
+      filter: drop-shadow(0 0 14px rgba(134, 190, 255, .28)) drop-shadow(0 0 28px rgba(255, 142, 190, .18));
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
     }
@@ -366,12 +325,12 @@
       will-change: opacity;
     }
 
-    .heart-text.show .heart-mask-layer {
-      animation: heart-mask-pulse 6800ms cubic-bezier(.45, 0, .2, 1) 500ms infinite;
+    .heart-text.show .heart-constellation {
+      animation: constellation-pulse 6200ms cubic-bezier(.42, 0, .2, 1) 700ms infinite;
       will-change: transform;
     }
 
-    .heart-svg {
+    .constellation-svg {
       position: absolute;
       inset: 0;
       width: 100%;
@@ -379,99 +338,114 @@
       overflow: visible;
     }
 
-    .heart-row {
-      fill: #f3a4bd;
-      font-family: "DejaVu Sans Mono", "Cascadia Mono", "SFMono-Regular", "Courier New", monospace;
-      font-weight: 900;
-      letter-spacing: .03em;
-      text-anchor: middle;
-      dominant-baseline: middle;
+    .constellation-curve {
+      fill: none;
+      stroke: rgba(255, 167, 202, .5);
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      opacity: 0;
+      filter: drop-shadow(0 0 8px rgba(255, 184, 214, .52));
+      vector-effect: non-scaling-stroke;
+    }
+
+    .heart-text.show .constellation-curve {
+      animation: constellation-curve-draw 1900ms cubic-bezier(.2,.74,.18,1) 250ms forwards;
+    }
+
+    .constellation-line {
+      stroke: rgba(177, 216, 255, .74);
+      stroke-width: 1.15;
+      stroke-linecap: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      opacity: 0;
+      filter: drop-shadow(0 0 7px rgba(173, 215, 255, .48));
+      vector-effect: non-scaling-stroke;
+    }
+
+    .constellation-line.active {
+      animation: constellation-line-draw 850ms cubic-bezier(.18,.72,.14,1) forwards;
+    }
+
+    .constellation-node {
+      fill: #fff6c8;
+      stroke: rgba(255, 255, 255, .8);
+      stroke-width: .25;
       opacity: 0;
       transform-box: fill-box;
       transform-origin: center;
-      animation: svg-line-reveal 1600ms cubic-bezier(.2,.72,.2,1) forwards;
-      paint-order: stroke fill;
-      stroke: rgba(255, 210, 224, .16);
-      stroke-width: .25px;
+      filter: drop-shadow(0 0 7px rgba(255, 242, 188, .82)) drop-shadow(0 0 16px rgba(255, 165, 206, .42));
+      vector-effect: non-scaling-stroke;
     }
 
-    .heart-text.show .heart-row {
-      opacity: 1;
-      animation: heart-row-color 7600ms ease-in-out 500ms infinite;
+    .constellation-node.active {
+      animation: constellation-node-born 1150ms cubic-bezier(.16,.78,.22,1) forwards;
     }
 
-    .heart-line {
+    .constellation-love {
       position: absolute;
       left: 50%;
-      transform: translateX(-50%);
-      color: #f3a4bd;
-      font-family: "DejaVu Sans Mono", "Cascadia Mono", "SFMono-Regular", "Courier New", monospace;
-      font-weight: 900;
-      letter-spacing: .03em;
-      font-size: clamp(8.6px, .9vw, 11.6px);
-      white-space: pre;
-      text-transform: uppercase;
+      top: 52%;
+      width: min(78vw, 520px);
+      transform: translate(-50%, -50%) scale(.94);
       opacity: 0;
-      animation: line-reveal 1600ms cubic-bezier(.2,.72,.2,1) forwards;
+      color: #ffd1df;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 6.4vw, 78px);
+      font-weight: 700;
+      letter-spacing: .035em;
+      line-height: 1.05;
+      text-align: center;
       text-shadow:
-        0 0 5px rgba(255, 187, 207, .26),
-        0 0 14px rgba(206, 87, 124, .16);
+        0 0 12px rgba(255, 188, 213, .62),
+        0 0 34px rgba(255, 114, 169, .34),
+        0 4px 18px rgba(4, 9, 20, .48);
     }
 
-    .wave {
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      border: 1.5px solid rgba(224, 171, 195, .72);
-      box-shadow: 0 0 10px rgba(224, 171, 195, .35);
-      transform: translate(-50%, -50%);
-      animation: wave-expand 1400ms cubic-bezier(.14,.64,.2,1) forwards;
-      z-index: 7;
-      pointer-events: none;
+    .heart-text.show .constellation-love {
+      animation:
+        love-appear 1600ms cubic-bezier(.16,.76,.18,1) 650ms forwards,
+        love-glow 5400ms ease-in-out 2300ms infinite;
     }
 
-    @keyframes line-reveal {
-      0% { opacity: 0; transform: translateX(-50%) scale(.96); }
-      55% { opacity: 1; transform: translateX(-50%) scale(1.006); }
-      100% { opacity: 1; transform: translateX(-50%) scale(1); }
-    }
-
-    @keyframes svg-line-reveal {
-      0% { opacity: 0; transform: scale(.94); }
-      60% { opacity: 1; transform: scale(1.008); }
+    @keyframes constellation-node-born {
+      0% { opacity: 0; transform: scale(.35); }
+      44% { opacity: 1; transform: scale(1.5); }
+      72% { opacity: 1; transform: scale(.92); }
       100% { opacity: 1; transform: scale(1); }
     }
 
-    @keyframes wave-expand {
-      0% { opacity: .9; transform: translate(-50%, -50%) scale(.2); }
-      100% { opacity: 0; transform: translate(-50%, -50%) scale(8.5); }
+    @keyframes constellation-line-draw {
+      0% { opacity: 0; stroke-dashoffset: 1; }
+      100% { opacity: 1; stroke-dashoffset: 0; }
     }
 
-    @keyframes heart-mask-pulse {
+    @keyframes constellation-curve-draw {
+      0% { opacity: 0; stroke-dashoffset: 1; }
+      55% { opacity: .62; }
+      100% { opacity: .5; stroke-dashoffset: 0; }
+    }
+
+    @keyframes love-appear {
+      0% { opacity: 0; transform: translate(-50%, -50%) scale(.9); filter: blur(5px); }
+      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+    }
+
+    @keyframes love-glow {
+      0%, 100% { color: #ffd1df; text-shadow: 0 0 12px rgba(255,188,213,.58), 0 0 34px rgba(255,114,169,.3), 0 4px 18px rgba(4,9,20,.48); }
+      50% { color: #fff0f6; text-shadow: 0 0 18px rgba(255,218,231,.82), 0 0 48px rgba(255,128,180,.46), 0 4px 18px rgba(4,9,20,.42); }
+    }
+
+    @keyframes constellation-pulse {
       0%, 100% {
         transform: translate3d(-50%, -50%, 0) scale(1);
       }
-      18% {
-        transform: translate3d(-50%, -50%, 0) scale(1.012);
-      }
-      42% {
-        transform: translate3d(-50%, -50%, 0) scale(1.038);
-      }
-      62% {
-        transform: translate3d(-50%, -50%, 0) scale(1.052);
-      }
-      82% {
-        transform: translate3d(-50%, -50%, 0) scale(1.014);
-      }
-    }
-
-    @keyframes heart-row-color {
-      0%, 100% { fill: #f3a4bd; }
-      24% { fill: #f8b3c8; }
-      48% { fill: #ffd0dc; }
-      68% { fill: #ffc3d3; }
-      86% { fill: #f6aebf; }
+      28% { transform: translate3d(-50%, -50%, 0) scale(1.018); }
+      56% { transform: translate3d(-50%, -50%, 0) scale(1.045); }
+      78% { transform: translate3d(-50%, -50%, 0) scale(1.012); }
     }
 
     .status {
@@ -512,30 +486,11 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    @keyframes heart-mask-pulse-mobile {
-      0%, 100% {
-        transform: translate3d(-50%, -50%, 0) scale(1);
-        filter: none;
-      }
-      24% {
-        transform: translate3d(-50%, -50%, 0) scale(1.012);
-        filter: none;
-      }
-      52% {
-        transform: translate3d(-50%, -50%, 0) scale(1.042);
-        filter: none;
-      }
-      76% {
-        transform: translate3d(-50%, -50%, 0) scale(1.014);
-        filter: none;
-      }
-    }
-
-    @keyframes heart-row-color-mobile {
-      0%, 100% { fill: #f3a4bd; }
-      28% { fill: #f8b3c8; }
-      52% { fill: #ffd0dc; }
-      76% { fill: #f7b6c2; }
+    @keyframes constellation-pulse-mobile {
+      0%, 100% { transform: translate3d(-50%, -50%, 0) scale(1); }
+      34% { transform: translate3d(-50%, -50%, 0) scale(1.014); }
+      62% { transform: translate3d(-50%, -50%, 0) scale(1.034); }
+      82% { transform: translate3d(-50%, -50%, 0) scale(1.01); }
     }
 
     @media (max-width: 560px), (hover: none) and (pointer: coarse) {
@@ -574,29 +529,12 @@
         box-shadow: 0 0 10px rgba(196, 220, 249, .62), 0 0 20px rgba(151, 187, 231, .24);
       }
 
-      .trail-dot {
-        filter: none;
-        mix-blend-mode: normal;
-      }
-
-      .particle {
-        width: 4px;
-        height: 4px;
-        box-shadow: none;
-        animation-duration: 900ms;
-      }
-
-      .wave {
-        box-shadow: none;
-        animation-duration: 1000ms;
-      }
-
-      .heart-mask-layer {
+      .heart-constellation {
         filter: none;
       }
 
-      .heart-text.show .heart-mask-layer {
-        animation: heart-mask-pulse-mobile 7200ms cubic-bezier(.45, 0, .2, 1) 500ms infinite;
+      .heart-text.show .heart-constellation {
+        animation: constellation-pulse-mobile 6800ms cubic-bezier(.45, 0, .2, 1) 700ms infinite;
       }
 
       .star .letter {
@@ -604,19 +542,28 @@
         font-size: clamp(.86rem, 3.6vw, 1rem);
       }
 
-      .heart-line {
-        letter-spacing: .005em;
-        text-shadow: 0 0 4px rgba(210, 110, 140, .18);
+      .constellation-line {
+        stroke-width: .9;
+        filter: none;
       }
 
-      .heart-row {
-        letter-spacing: .005em;
-        stroke-width: 0;
+      .constellation-curve {
+        stroke-width: 1.05;
+        filter: none;
       }
 
-      .heart-text.show .heart-row {
-        animation: heart-row-color-mobile 7800ms ease-in-out 500ms infinite;
-        opacity: 1;
+      .constellation-node {
+        filter: none;
+      }
+
+      .constellation-love {
+        top: 53%;
+        width: 78vw;
+        font-size: clamp(28px, 9vw, 42px);
+        letter-spacing: .02em;
+        text-shadow:
+          0 0 10px rgba(255, 188, 213, .52),
+          0 0 24px rgba(255, 114, 169, .26);
       }
 
       .status {
@@ -666,12 +613,17 @@
   <span class="shooting-star s3" aria-hidden="true"></span>
   <main class="sky" id="sky" aria-label="Небо"></main>
   <canvas class="fx-canvas" id="fxCanvas" aria-hidden="true"></canvas>
-  <section class="heart-text" id="heartText" aria-label="Сердце из текста"></section>
+  <section class="heart-text" id="heartText" aria-label="Сердце-созвездие"></section>
   <div class="status" id="status">Нажимай на звезды · 0/10</div>
   <button class="quality-toggle" id="qualityToggle" type="button" aria-label="Переключить качество">Режим: Плавно</button>
 
   <script>
     const letters = ["Я", "Л", "Ю", "Б", "Л", "Ю", "Т", "Е", "Б", "Я"];
+    const HEART_PATH = "M50 82C20 60 5 44 5 25C5 11 16 4 29 4C39 4 47 10 50 19C53 10 61 4 71 4C84 4 95 11 95 25C95 44 80 60 50 82Z";
+    const HEART_CONSTELLATION_POINTS = [
+      [50, 82], [29, 66], [12, 49], [8, 27], [29, 8],
+      [50, 20], [71, 8], [92, 27], [88, 49], [71, 66]
+    ];
     const positions = [
       [6, 10], [19, 28], [33, 14], [48, 38], [63, 20],
       [79, 46], [92, 26], [74, 66], [52, 84], [14, 74]
@@ -691,11 +643,14 @@
     let orbitHandle = null;
     let lastFrame = performance.now();
     let arrivedToHeart = 0;
-    let heartRows = [];
-    let heartRowCursor = 0;
-    let revealedHeartRows = new Set();
-    let heartMaskLayer = null;
-    let heartRowsLayer = null;
+    let constellationLayer = null;
+    let constellationSvg = null;
+    let constellationTargets = [];
+    let constellationNodes = [];
+    let constellationLines = [];
+    let revealedConstellationNodes = new Set();
+    let lockedHeartLayout = null;
+    let finaleComplete = false;
     let fxW = 0;
     let fxH = 0;
     let fxDpr = 1;
@@ -705,6 +660,7 @@
     const stars = [];
     const comets = [];
     const fxParticles = [];
+    const fxStreaks = [];
     const coarsePointerQuery = window.matchMedia ? window.matchMedia("(hover: none) and (pointer: coarse)") : null;
     let qualityMode = "smooth";
     let lowPowerMode = false;
@@ -733,8 +689,9 @@
         status.textContent = `Нажимай на звезды · ${opened}/${letters.length}`;
 
         const rect = sky.getBoundingClientRect();
-        const sx = ((ev.clientX - rect.left) / rect.width) * 100;
-        const sy = ((ev.clientY - rect.top) / rect.height) * 100;
+        const starRect = btn.getBoundingClientRect();
+        const sx = clampPercent(((starRect.left + starRect.width / 2 - rect.left) / rect.width) * 100);
+        const sy = clampPercent(((starRect.top + starRect.height / 2 - rect.top) / rect.height) * 100);
 
         explode(sx, sy, 28);
 
@@ -813,7 +770,7 @@
         hy2: 0,
         htx: 0,
         hty: 0,
-        hpoints: []
+        hindex: -1
       };
 
       comets.push(c);
@@ -826,19 +783,19 @@
     function beginHeartAssembly() {
       if (assembling) return;
       assembling = true;
+      finaleComplete = false;
+      lockedHeartLayout = getHeartLayout();
       arrivedToHeart = 0;
-      heartRowCursor = 0;
-      revealedHeartRows = new Set();
+      revealedConstellationNodes = new Set();
       heartText.classList.remove("show");
-      resetHeartSvg();
-      heartRows = buildHeartRows();
+      constellationTargets = buildConstellationTargets(lockedHeartLayout, comets.length);
+      resetConstellation(constellationTargets);
       heartText.classList.add("revealing");
 
-      const chunks = makeHeartChunks(comets.length);
-      const assigned = assignTargets(comets, chunks);
+      const assigned = assignConstellationTargets(comets, constellationTargets);
 
       comets.forEach((c, i) => {
-        const target = assigned[i].anchor;
+        const target = assigned[i];
         const dx = target.x - c.x;
         const dy = target.y - c.y;
         const d = Math.hypot(dx, dy) || 1;
@@ -864,7 +821,7 @@
         c.hy2 = target.y - (dy / d) * arriveLead - ny * curve * 0.55;
         c.htx = target.x;
         c.hty = target.y;
-        c.hpoints = assigned[i].points;
+        c.hindex = target.index;
       });
     }
 
@@ -906,11 +863,15 @@
             const ex = c.x;
             const ey = c.y;
             explode(ex, ey, 42);
-            revealHeartChunk(c.hpoints, ex, ey);
+            revealConstellationNode(c.hindex);
             arrivedToHeart += 1;
             if (arrivedToHeart === comets.length) {
+              revealAllConstellationLines();
               heartText.classList.add("show");
               status.textContent = "Я люблю тебя";
+              finaleComplete = true;
+              assembling = false;
+              lockedHeartLayout = null;
             }
           }
         }
@@ -965,6 +926,10 @@
       return Math.min(1, Math.max(0, 0.72 * t + 0.28 * smoother(t)));
     }
 
+    function clampPercent(value) {
+      return Math.min(100, Math.max(0, value));
+    }
+
     function initQualityMode() {
       let saved = "";
       try {
@@ -1013,18 +978,48 @@
       return { x: x * fxW / 100, y: y * fxH / 100 };
     }
 
-    function addFxParticle(particle) {
-      fxParticles.push(particle);
+    function ensureFxLoop() {
       if (!fxHandle) {
         fxLastFrame = performance.now();
         fxHandle = requestAnimationFrame(tickFx);
       }
     }
 
+    function addFxParticle(particle) {
+      fxParticles.push(particle);
+      const maxParticles = lowPowerMode ? 220 : 620;
+      if (fxParticles.length > maxParticles) {
+        fxParticles.splice(0, fxParticles.length - maxParticles);
+      }
+      ensureFxLoop();
+    }
+
+    function addFxStreak(streak) {
+      fxStreaks.push(streak);
+      const maxStreaks = lowPowerMode ? 26 : 54;
+      if (fxStreaks.length > maxStreaks) {
+        fxStreaks.splice(0, fxStreaks.length - maxStreaks);
+      }
+      ensureFxLoop();
+    }
+
     function tickFx(now) {
       const dt = Math.min(0.04, (now - fxLastFrame) / 1000);
       fxLastFrame = now;
       fxCtx.clearRect(0, 0, fxW, fxH);
+
+      for (let i = fxStreaks.length - 1; i >= 0; i--) {
+        const s = fxStreaks[i];
+        s.age += dt;
+        if (s.age >= s.life) {
+          fxStreaks.splice(i, 1);
+          continue;
+        }
+
+        const k = s.age / s.life;
+        const alpha = (s.alpha || 1) * Math.pow(1 - k, 1.25);
+        drawTrailPath(s.points, s.width * (1 - k * 0.42), alpha, s);
+      }
 
       for (let i = fxParticles.length - 1; i >= 0; i--) {
         const p = fxParticles[i];
@@ -1041,52 +1036,112 @@
 
         const k = p.age / p.life;
         const alpha = (p.alpha || 1) * (1 - k);
-        const size = p.size * (p.grow ? 1 + k * p.grow : 1);
+        const size = p.kind === "ring"
+          ? p.size + k * (p.radiusGrow || 0)
+          : p.size * (p.grow ? 1 + k * p.grow : 1);
 
         fxCtx.globalAlpha = alpha;
-        fxCtx.fillStyle = p.color;
         if (!lowPowerMode && p.glow) {
           fxCtx.shadowColor = p.color;
           fxCtx.shadowBlur = p.glow;
         } else {
           fxCtx.shadowBlur = 0;
         }
-        fxCtx.beginPath();
-        fxCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
-        fxCtx.fill();
+
+        if (p.kind === "ring") {
+          fxCtx.strokeStyle = p.color;
+          fxCtx.lineWidth = Math.max(0.8, (p.lineWidth || 2) * (1 - k * 0.65));
+          fxCtx.beginPath();
+          fxCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+          fxCtx.stroke();
+        } else {
+          fxCtx.fillStyle = p.color;
+          fxCtx.beginPath();
+          fxCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+          fxCtx.fill();
+        }
       }
 
       fxCtx.globalAlpha = 1;
       fxCtx.shadowBlur = 0;
       fxCtx.shadowColor = "transparent";
+      fxCtx.lineWidth = 1;
 
-      if (fxParticles.length) fxHandle = requestAnimationFrame(tickFx);
+      if (fxParticles.length || fxStreaks.length) fxHandle = requestAnimationFrame(tickFx);
       else fxHandle = null;
+    }
+
+    function drawTrailPath(points, width, alpha, streak) {
+      if (!points || points.length < 2) return;
+
+      fxCtx.lineCap = "round";
+      fxCtx.lineJoin = "round";
+      if (!lowPowerMode && streak.glow) {
+        fxCtx.shadowColor = streak.glowColor || streak.color;
+        fxCtx.shadowBlur = streak.glow;
+      } else {
+        fxCtx.shadowBlur = 0;
+      }
+
+      fxCtx.globalAlpha = alpha * 0.5;
+      fxCtx.strokeStyle = streak.outerColor || "rgba(142,184,237,.45)";
+      fxCtx.lineWidth = width;
+      strokeSmoothPath(points);
+
+      fxCtx.globalAlpha = alpha;
+      fxCtx.strokeStyle = streak.color || "rgba(228,240,255,.82)";
+      fxCtx.lineWidth = Math.max(2, width * 0.42);
+      strokeSmoothPath(points);
+    }
+
+    function strokeSmoothPath(points) {
+      fxCtx.beginPath();
+      fxCtx.moveTo(points[0].x, points[0].y);
+
+      for (let i = 1; i < points.length - 1; i++) {
+        const midX = (points[i].x + points[i + 1].x) / 2;
+        const midY = (points[i].y + points[i + 1].y) / 2;
+        fxCtx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
+      }
+
+      const last = points[points.length - 1];
+      fxCtx.lineTo(last.x, last.y);
+      fxCtx.stroke();
     }
 
     function renderTrail(trail, lowPower) {
       const n = trail.length;
-      const start = lowPower ? n - 1 : Math.max(0, n - 4);
+      if (n < 2) return;
 
-      for (let i = start; i < n; i++) {
-        const p = trail[i];
-        const k = lowPower ? 1 : i / Math.max(1, n - 1);
-        const pt = percentToCanvas(p.x, p.y);
-        addFxParticle({
-          x: pt.x,
-          y: pt.y,
-          vx: 0,
-          vy: 0,
-          age: 0,
-          life: lowPower ? 0.36 : 0.55,
-          size: lowPower ? 4.8 + k * 5.2 : 3 + k * 9,
-          grow: lowPower ? 0.25 : 0.5,
-          alpha: lowPower ? 0.2 : 0.34 + k * 0.2,
-          color: lowPower ? "rgba(203,226,255,.72)" : "rgba(216,235,255,.82)",
-          glow: lowPower ? 0 : 12,
-          drag: 1
-        });
-      }
+      const points = trail.slice(lowPower ? -5 : -10).map((p) => percentToCanvas(p.x, p.y));
+      const head = points[points.length - 1];
+
+      addFxStreak({
+        points,
+        age: 0,
+        life: lowPower ? 0.36 : 0.5,
+        width: lowPower ? 17 : 23,
+        alpha: lowPower ? 0.24 : 0.34,
+        color: lowPower ? "rgba(222,238,255,.72)" : "rgba(231,243,255,.86)",
+        outerColor: lowPower ? "rgba(112,158,220,.28)" : "rgba(116,166,232,.38)",
+        glowColor: "rgba(185,220,255,.78)",
+        glow: lowPower ? 0 : 14
+      });
+
+      addFxParticle({
+        x: head.x,
+        y: head.y,
+        vx: 0,
+        vy: 0,
+        age: 0,
+        life: lowPower ? 0.22 : 0.28,
+        size: lowPower ? 7 : 9,
+        grow: 0.2,
+        alpha: lowPower ? 0.18 : 0.28,
+        color: lowPower ? "rgba(205,226,255,.55)" : "rgba(230,242,255,.68)",
+        glow: lowPower ? 0 : 8,
+        drag: 1
+      });
     }
 
     function explode(x, y, count) {
@@ -1096,12 +1151,23 @@
       const minSpeed = lowPower ? 28 : 40;
       const speedSpread = lowPower ? 80 : 150;
       const center = percentToCanvas(x, y);
-      const wave = document.createElement("span");
-      wave.className = "wave";
-      wave.style.left = `${x}%`;
-      wave.style.top = `${y}%`;
-      sky.appendChild(wave);
-      setTimeout(() => wave.remove(), 1450);
+
+      addFxParticle({
+        kind: "ring",
+        x: center.x,
+        y: center.y,
+        vx: 0,
+        vy: 0,
+        age: 0,
+        life: lowPower ? 0.9 : 1.25,
+        size: lowPower ? 5 : 7,
+        radiusGrow: lowPower ? 48 : 76,
+        lineWidth: lowPower ? 1.8 : 2.4,
+        alpha: lowPower ? 0.54 : 0.78,
+        color: "rgba(255,199,219,.82)",
+        glow: lowPower ? 0 : 14,
+        drag: 1
+      });
 
       for (let i = 0; i < particleCount; i++) {
         const a = Math.random() * Math.PI * 2;
@@ -1123,67 +1189,106 @@
       }
     }
 
-    function makeHeartChunks(chunkCount) {
-      const rows = heartRows.length ? heartRows : buildHeartRows();
-      const points = [];
+    function resetConstellation(targets) {
+      const svgNS = "http://www.w3.org/2000/svg";
+      heartText.innerHTML = "";
+      constellationNodes = [];
+      constellationLines = [];
 
-      rows.forEach((row, rowIndex) => {
-        const segments = row.segments || [{ center: 50, width: 70 }];
-        segments.forEach((segment) => {
-          const width = Math.max(3, segment.width);
-          const count = Math.max(2, Math.round(width / 8));
-          for (let i = 0; i < count; i++) {
-            const k = count === 1 ? 0.5 : i / (count - 1);
-            points.push({
-              x: segment.center - width / 2 + width * k,
-              y: row.y,
-              row: rowIndex
-            });
-          }
-        });
+      constellationLayer = document.createElement("div");
+      constellationLayer.className = "heart-constellation";
+      applyConstellationLayout(lockedHeartLayout || getHeartLayout());
+
+      constellationSvg = document.createElementNS(svgNS, "svg");
+      constellationSvg.classList.add("constellation-svg");
+      constellationSvg.setAttribute("viewBox", "0 0 100 90");
+      constellationSvg.setAttribute("preserveAspectRatio", "none");
+      constellationSvg.setAttribute("aria-hidden", "true");
+      constellationSvg.setAttribute("focusable", "false");
+
+      const curve = document.createElementNS(svgNS, "path");
+      curve.classList.add("constellation-curve");
+      curve.setAttribute("d", HEART_PATH);
+      curve.setAttribute("pathLength", "1");
+      constellationSvg.appendChild(curve);
+
+      targets.forEach((target, index) => {
+        const next = targets[(index + 1) % targets.length];
+        const line = document.createElementNS(svgNS, "line");
+        line.classList.add("constellation-line");
+        line.setAttribute("x1", target.lx);
+        line.setAttribute("y1", target.ly);
+        line.setAttribute("x2", next.lx);
+        line.setAttribute("y2", next.ly);
+        line.setAttribute("pathLength", "1");
+        line.dataset.from = index;
+        line.dataset.to = (index + 1) % targets.length;
+        constellationSvg.appendChild(line);
+        constellationLines[index] = line;
       });
 
-      const anchors = [];
-      const step = Math.max(1, Math.floor(points.length / chunkCount));
-      for (let i = 0; i < chunkCount; i++) {
-        anchors.push(points[Math.min(points.length - 1, i * step)]);
+      targets.forEach((target, index) => {
+        const node = document.createElementNS(svgNS, "circle");
+        node.classList.add("constellation-node");
+        node.setAttribute("cx", target.lx);
+        node.setAttribute("cy", target.ly);
+        node.setAttribute("r", index === 0 ? "2.25" : "1.75");
+        node.dataset.index = index;
+        constellationSvg.appendChild(node);
+        constellationNodes[index] = node;
+      });
+
+      const label = document.createElement("div");
+      label.className = "constellation-love";
+      label.textContent = "Я люблю тебя";
+
+      constellationLayer.append(constellationSvg, label);
+      heartText.appendChild(constellationLayer);
+    }
+
+    function buildConstellationTargets(layout, count) {
+      return getConstellationLocalPoints(count).map(([lx, ly], index) => {
+        const point = heartLocalToViewport(lx, ly, layout);
+        return { index, lx, ly, x: point.x, y: point.y };
+      });
+    }
+
+    function getConstellationLocalPoints(count) {
+      if (count === HEART_CONSTELLATION_POINTS.length) {
+        return HEART_CONSTELLATION_POINTS.map(([x, y]) => [x, y]);
       }
 
-      const chunks = anchors.map((a) => ({ anchor: { x: a.x, y: a.y }, points: [] }));
-      points.forEach((p) => {
-        let best = 0;
-        let bestDist = Infinity;
-        anchors.forEach((a, i) => {
-          const d = (p.x - a.x) * (p.x - a.x) + (p.y - a.y) * (p.y - a.y);
-          if (d < bestDist) {
-            bestDist = d;
-            best = i;
-          }
-        });
-        chunks[best].points.push(p);
-      });
+      const base = HEART_CONSTELLATION_POINTS;
+      const lengths = [];
+      let total = 0;
+      for (let i = 0; i < base.length; i++) {
+        const a = base[i];
+        const b = base[(i + 1) % base.length];
+        const segment = Math.hypot(b[0] - a[0], b[1] - a[1]);
+        lengths.push(segment);
+        total += segment;
+      }
 
-      return chunks;
-    }
-
-    function sparse(points, minDist) {
-      const out = [];
-      const md2 = minDist * minDist;
-      points.forEach((p) => {
-        let near = false;
-        for (let i = 0; i < out.length; i++) {
-          const dx = p.x - out[i].x;
-          const dy = p.y - out[i].y;
-          if (dx*dx + dy*dy < md2) { near = true; break; }
+      const points = [];
+      for (let i = 0; i < count; i++) {
+        let dist = (i / count) * total;
+        let segmentIndex = 0;
+        while (dist > lengths[segmentIndex] && segmentIndex < lengths.length - 1) {
+          dist -= lengths[segmentIndex];
+          segmentIndex += 1;
         }
-        if (!near) out.push(p);
-      });
-      return out;
+
+        const a = base[segmentIndex];
+        const b = base[(segmentIndex + 1) % base.length];
+        const k = lengths[segmentIndex] ? dist / lengths[segmentIndex] : 0;
+        points.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]);
+      }
+      return points;
     }
 
-    function assignTargets(cometsList, chunks) {
+    function assignConstellationTargets(cometsList, targetsList) {
       const starsP = cometsList.map((c, i) => ({ i, x: c.x, y: c.y }));
-      const targets = chunks.map((c) => ({ x: c.anchor.x, y: c.anchor.y, points: c.points }));
+      const targets = targetsList.map((target) => ({ ...target }));
       const out = new Array(cometsList.length);
 
       starsP.forEach((s) => {
@@ -1194,125 +1299,46 @@
           if (d < bd) { bd = d; bi = i; }
         });
         const pick = targets.splice(bi, 1)[0];
-        out[s.i] = { anchor: { x: pick.x, y: pick.y }, points: pick.points };
+        out[s.i] = pick;
       });
 
       return out;
     }
 
-    function resetHeartSvg() {
-      const svgNS = "http://www.w3.org/2000/svg";
-      heartText.innerHTML = "";
-      heartMaskLayer = document.createElement("div");
-      heartMaskLayer.className = "heart-mask-layer";
+    function revealConstellationNode(index) {
+      if (!Number.isInteger(index) || !constellationNodes[index]) return;
 
-      const svg = document.createElementNS(svgNS, "svg");
-      svg.classList.add("heart-svg");
-      svg.setAttribute("aria-hidden", "true");
-      svg.setAttribute("focusable", "false");
-
-      heartRowsLayer = document.createElementNS(svgNS, "g");
-      heartRowsLayer.classList.add("heart-rows");
-      svg.appendChild(heartRowsLayer);
-      heartMaskLayer.appendChild(svg);
-      heartText.appendChild(heartMaskLayer);
+      revealedConstellationNodes.add(index);
+      constellationNodes[index].classList.add("active");
+      revealConstellationLinesFor(index);
     }
 
-    function revealHeartChunk(points, ex, ey) {
-      const rowsPerBlast = Math.max(3, Math.ceil(heartRows.length / Math.max(1, letters.length)));
-      const picked = Array.from(new Set((points || []).map((p) => p.row)))
-        .filter((i) => Number.isInteger(i) && !revealedHeartRows.has(i))
-        .sort((a, b) => Math.abs(heartRows[a].y - ey) - Math.abs(heartRows[b].y - ey));
+    function revealConstellationLinesFor(index) {
+      const total = constellationNodes.length;
+      if (!total) return;
 
-      const nearest = heartRows
-        .map((row, i) => ({ i, d: Math.abs(row.y - ey) }))
-        .filter((row) => !revealedHeartRows.has(row.i) && !picked.includes(row.i))
-        .sort((a, b) => a.d - b.d);
+      const prev = (index - 1 + total) % total;
+      const next = (index + 1) % total;
+      if (revealedConstellationNodes.has(prev)) constellationLines[prev]?.classList.add("active");
+      if (revealedConstellationNodes.has(next)) constellationLines[index]?.classList.add("active");
+    }
 
-      while (picked.length < rowsPerBlast && nearest.length) {
-        picked.push(nearest.shift().i);
-      }
-
-      picked.sort((a, b) => a - b).forEach((i, order) => {
-        const row = heartRows[i];
-        const n = document.createElementNS("http://www.w3.org/2000/svg", "text");
-        n.classList.add("heart-row");
-        n.textContent = row.text;
-        n.dataset.row = i;
-        n.setAttribute("x", "50%");
-        n.setAttribute("y", `${row.localY ?? row.y}%`);
-        const d = Math.hypot(50 - ex, row.y - ey);
-        n.style.animationDelay = `${(0.03 + d * 0.012 + order * 0.045).toFixed(3)}s`;
-        n.style.fontSize = `${row.size}px`;
-        (heartRowsLayer || heartText).appendChild(n);
-        revealedHeartRows.add(i);
+    function revealAllConstellationNodes() {
+      constellationNodes.forEach((node, index) => {
+        revealedConstellationNodes.add(index);
+        node.classList.add("active");
       });
-      heartRowCursor = revealedHeartRows.size;
     }
 
-    function buildHeartRows() {
-      const phrase = "Я ЛЮБЛЮ ТЕБЯ ";
-      const layout = getHeartLayout();
-      const rows = [];
-      let phrasePos = 0;
-
-      applyHeartMaskLayout(layout);
-
-      const makeText = (len) => {
-        let text = "";
-        for (let i = 0; i < len; i++) {
-          text += phrase[phrasePos % phrase.length];
-          phrasePos += 1;
-        }
-        return text;
-      };
-
-      for (let r = 0; r < layout.sampleRows; r++) {
-        const progress = r / Math.max(1, layout.sampleRows - 1);
-        const y = layout.top + progress * (layout.bottom - layout.top);
-        const curveY = 1.25 - progress * 2.45;
-        const localY = 6 + progress * 88;
-
-        rows.push({
-          y,
-          localY,
-          text: makeText(layout.cols),
-          size: layout.fontSize,
-          segments: makeImplicitHeartSegments(curveY, layout.visualWidth)
-        });
-      }
-
-      return rows;
+    function revealAllConstellationLines() {
+      constellationLines.forEach((line) => line?.classList.add("active"));
     }
 
-    function applyHeartMaskLayout(layout) {
-      const target = heartMaskLayer || heartText;
-      target.style.setProperty("--heart-mask-w", `${layout.visualWidth}%`);
-      target.style.setProperty("--heart-mask-h", `${(layout.bottom - layout.top).toFixed(2)}%`);
-      target.style.setProperty("--heart-mask-y", `${((layout.top + layout.bottom) / 2).toFixed(2)}%`);
-    }
-
-    function makeImplicitHeartSegments(curveY, visualWidth) {
-      const sampleCols = 140;
-      const segments = [];
-      let start = -1;
-
-      for (let c = 0; c < sampleCols; c++) {
-        const x = -1.45 + (c / (sampleCols - 1)) * 2.9;
-        const xx = x * 1.03;
-        const yy = curveY * 1.08;
-        const f = Math.pow(xx * xx + yy * yy - 1, 3) - xx * xx * Math.pow(yy, 3);
-        const inside = f <= 0.025;
-
-        if (inside && start === -1) start = c;
-        if ((!inside || c === sampleCols - 1) && start !== -1) {
-          const end = inside && c === sampleCols - 1 ? c : c - 1;
-          segments.push(makeHeartSegment(start, end, sampleCols, visualWidth));
-          start = -1;
-        }
-      }
-
-      return segments.length ? segments : [{ center: 50, width: 2 }];
+    function applyConstellationLayout(layout) {
+      const target = constellationLayer || heartText;
+      target.style.setProperty("--heart-w", `${layout.visualWidth}%`);
+      target.style.setProperty("--heart-h", `${(layout.bottom - layout.top).toFixed(2)}%`);
+      target.style.setProperty("--heart-y", `${((layout.top + layout.bottom) / 2).toFixed(2)}%`);
     }
 
     function getHeartLayout() {
@@ -1321,35 +1347,23 @@
       const portraitPhone = width <= 560 && height > width * 1.12;
       const landscapePhone = height <= 560 && width <= 960;
       const tablet = !portraitPhone && !landscapePhone && width > 560 && width <= 900;
-      const fontSize = portraitPhone ? (width < 380 ? 9.1 : 10) : landscapePhone ? 8.9 : tablet ? 10.2 : 11.2;
-      const visualWidth = portraitPhone ? (width < 380 ? 94 : 96) : landscapePhone ? 88 : tablet ? 92 : 98;
-      const usableWidth = width * (portraitPhone ? 0.94 : landscapePhone ? 0.9 : tablet ? 0.94 : 0.96);
-      const charWidth = fontSize * (portraitPhone ? 0.6 : 0.66);
-      const cols = Math.max(portraitPhone ? 50 : landscapePhone ? 74 : 96, Math.min(184, Math.floor(usableWidth / charWidth)));
-      const sampleRows = portraitPhone ? 22 : landscapePhone ? 30 : tablet ? 40 : 42;
+      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+      const visualWidth = portraitPhone ? (width < 380 ? 82 : 86) : landscapePhone ? 48 : tablet ? 58 : 44;
+      const targetAspect = 1.24;
+      const minHeight = portraitPhone ? 29 : landscapePhone ? 56 : tablet ? 38 : 50;
+      const maxHeight = portraitPhone ? 36 : landscapePhone ? 70 : tablet ? 52 : 64;
+      const heightPct = clamp(((width * visualWidth / 100) / targetAspect / height) * 100, minHeight, maxHeight);
+      const centerY = 50;
+      const top = centerY - heightPct / 2;
+      const bottom = centerY + heightPct / 2;
 
-      let top = 15.5;
-      let bottom = 84.5;
-      if (portraitPhone || landscapePhone) {
-        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-        const targetRatio = portraitPhone ? 0.72 : 0.42;
-        const minHeight = portraitPhone ? 30 : 54;
-        const maxHeight = portraitPhone ? 38 : 72;
-        const heightPct = clamp(((width * visualWidth / 100) * targetRatio / height) * 100, minHeight, maxHeight);
-        const centerY = portraitPhone ? 51 : 50;
-        top = centerY - heightPct / 2;
-        bottom = centerY + heightPct / 2;
-      }
-
-      return { cols, sampleRows, visualWidth, fontSize, top, bottom, mobileProfile: portraitPhone };
+      return { visualWidth, top, bottom, mobileProfile: portraitPhone };
     }
 
-    function makeHeartSegment(start, end, cols, visualWidth) {
-      const left = start / cols;
-      const right = (end + 1) / cols;
+    function heartLocalToViewport(localX, localY, layout) {
       return {
-        center: 50 - visualWidth / 2 + ((left + right) / 2) * visualWidth,
-        width: Math.max(2, (right - left) * visualWidth)
+        x: 50 - layout.visualWidth / 2 + (localX / 100) * layout.visualWidth,
+        y: layout.top + (localY / 90) * (layout.bottom - layout.top)
       };
     }
 
@@ -1359,22 +1373,19 @@
       resizeTimer = setTimeout(() => {
         updateLowPowerMode();
         resizeFxCanvas();
-        if (!heartRows.length || !heartText.children.length) return;
+        if (!constellationTargets.length || !heartText.children.length) return;
+        if (assembling && !finaleComplete) return;
 
-        heartRows = buildHeartRows();
-        applyHeartMaskLayout(getHeartLayout());
-        heartText.querySelectorAll(".heart-row").forEach((line) => {
-          const index = Number(line.dataset.row);
-          const row = heartRows[index];
-          if (!row) {
-            line.remove();
-            return;
-          }
-
-          line.textContent = row.text;
-          line.setAttribute("y", `${row.localY ?? row.y}%`);
-          line.style.fontSize = `${row.size}px`;
-        });
+        const layout = getHeartLayout();
+        lockedHeartLayout = layout;
+        constellationTargets = buildConstellationTargets(layout, letters.length);
+        resetConstellation(constellationTargets);
+        if (finaleComplete) {
+          heartText.classList.add("revealing", "show");
+          revealAllConstellationNodes();
+          revealAllConstellationLines();
+        }
+        lockedHeartLayout = null;
       }, 160);
     });
 
