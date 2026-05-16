@@ -486,6 +486,79 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    .orientation-hint {
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 28px;
+      text-align: center;
+      color: #f4f8ff;
+      background:
+        radial-gradient(circle at 50% 36%, rgba(143, 188, 255, .2), transparent 36%),
+        radial-gradient(circle at 50% 66%, rgba(255, 145, 191, .14), transparent 38%),
+        rgba(3, 8, 18, .86);
+      backdrop-filter: blur(10px);
+      pointer-events: auto;
+    }
+
+    body.needs-rotation .orientation-hint {
+      display: flex;
+    }
+
+    body.needs-rotation .sky,
+    body.needs-rotation .quality-toggle {
+      pointer-events: none;
+    }
+
+    .orientation-card {
+      width: min(86vw, 360px);
+      border: 1px solid rgba(211, 228, 255, .26);
+      border-radius: 30px;
+      padding: 30px 24px 28px;
+      background: rgba(9, 20, 40, .58);
+      box-shadow:
+        0 18px 60px rgba(0, 0, 0, .38),
+        inset 0 1px 0 rgba(255, 255, 255, .08);
+    }
+
+    .orientation-icon {
+      display: block;
+      width: 70px;
+      height: 42px;
+      margin: 0 auto 18px;
+      border: 3px solid rgba(244, 248, 255, .88);
+      border-radius: 12px;
+      box-shadow:
+        0 0 18px rgba(190, 220, 255, .46),
+        0 0 36px rgba(255, 145, 191, .24);
+      animation: phone-tilt 2400ms ease-in-out infinite;
+    }
+
+    .orientation-title {
+      margin: 0 0 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(28px, 8vw, 42px);
+      font-weight: 700;
+      letter-spacing: .02em;
+      text-shadow: 0 0 20px rgba(255, 188, 213, .38);
+    }
+
+    .orientation-subtitle {
+      margin: 0;
+      color: rgba(230, 240, 255, .78);
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    @keyframes phone-tilt {
+      0%, 100% { transform: rotate(0deg) scale(1); }
+      45% { transform: rotate(90deg) scale(1.04); }
+      70% { transform: rotate(90deg) scale(1.04); }
+    }
+
     @keyframes constellation-pulse-mobile {
       0%, 100% { transform: translate3d(-50%, -50%, 0) scale(1); }
       34% { transform: translate3d(-50%, -50%, 0) scale(1.014); }
@@ -578,6 +651,10 @@
         backdrop-filter: none;
         background: rgba(8, 19, 37, .66);
       }
+
+      .orientation-hint {
+        backdrop-filter: none;
+      }
     }
 
     body[data-quality="smooth"] .shooting-star:not(.s1) {
@@ -616,6 +693,13 @@
   <section class="heart-text" id="heartText" aria-label="Сердце-созвездие"></section>
   <div class="status" id="status">Нажимай на звезды · 0/10</div>
   <button class="quality-toggle" id="qualityToggle" type="button" aria-label="Переключить качество">Режим: Плавно</button>
+  <div class="orientation-hint" id="orientationHint" aria-live="polite" aria-hidden="true">
+    <div class="orientation-card">
+      <span class="orientation-icon" aria-hidden="true"></span>
+      <p class="orientation-title">Переверни телефон</p>
+      <p class="orientation-subtitle">Лучше смотреть это небо горизонтально</p>
+    </div>
+  </div>
 
   <script>
     const letters = ["Я", "Л", "Ю", "Б", "Л", "Ю", "Т", "Е", "Б", "Я"];
@@ -635,6 +719,7 @@
     const fxCanvas = document.getElementById("fxCanvas");
     const fxCtx = fxCanvas.getContext("2d");
     const qualityToggle = document.getElementById("qualityToggle");
+    const orientationHint = document.getElementById("orientationHint");
 
     let opened = 0;
     let assembling = false;
@@ -961,6 +1046,18 @@
     function updateLowPowerMode() {
       lowPowerMode = qualityMode === "smooth";
       return lowPowerMode;
+    }
+
+    function updateOrientationHint() {
+      const width = window.innerWidth || document.documentElement.clientWidth || 0;
+      const height = window.innerHeight || document.documentElement.clientHeight || 0;
+      const coarsePointer = coarsePointerQuery ? coarsePointerQuery.matches : false;
+      const compactScreen = Math.min(width, height) <= 560 && Math.max(width, height) <= 960;
+      const isPhone = coarsePointer && compactScreen;
+      const needsRotation = isPhone && height > width;
+
+      document.body.classList.toggle("needs-rotation", needsRotation);
+      orientationHint.setAttribute("aria-hidden", needsRotation ? "false" : "true");
     }
 
     function resizeFxCanvas() {
@@ -1370,6 +1467,7 @@
     let resizeTimer = 0;
     window.addEventListener("resize", () => {
       clearTimeout(resizeTimer);
+      updateOrientationHint();
       resizeTimer = setTimeout(() => {
         updateLowPowerMode();
         resizeFxCanvas();
@@ -1389,7 +1487,16 @@
       }, 160);
     });
 
+    window.addEventListener("orientationchange", updateOrientationHint);
+    if (screen.orientation && screen.orientation.addEventListener) {
+      screen.orientation.addEventListener("change", updateOrientationHint);
+    }
+    if (coarsePointerQuery && coarsePointerQuery.addEventListener) {
+      coarsePointerQuery.addEventListener("change", updateOrientationHint);
+    }
+
     initQualityMode();
+    updateOrientationHint();
     letters.forEach(makeStar);
   </script>
 </body>
