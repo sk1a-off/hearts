@@ -1,789 +1,968 @@
 <!doctype html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ночное сердце</title>
-  <style>
-    :root {
-      --bg-top: #040914;
-      --bg-mid: #0a1c3d;
-      --bg-bot: #173f79;
-      --text: #eaf2ff;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      min-height: 100dvh;
-      overflow: hidden;
-      font-family: "Segoe UI", sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(1100px 650px at 18% 20%, rgba(92, 130, 255, .16), transparent 60%),
-        radial-gradient(950px 600px at 84% 22%, rgba(105, 205, 255, .14), transparent 60%),
-        radial-gradient(1200px 720px at 50% 120%, rgba(98, 140, 240, .34), transparent 64%),
-        linear-gradient(180deg, var(--bg-top), var(--bg-mid) 52%, var(--bg-bot));
-    }
-
-    .stars-bg,
-    .stars-bg::before,
-    .stars-bg::after {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-    }
-
-    .stars-bg {
-      z-index: 0;
-      background-image:
-        radial-gradient(1.7px 1.7px at 8% 17%, rgba(255,255,255,.84) 45%, transparent 50%),
-        radial-gradient(1.5px 1.5px at 25% 36%, rgba(255,255,255,.74) 45%, transparent 50%),
-        radial-gradient(1.6px 1.6px at 41% 16%, rgba(255,255,255,.76) 45%, transparent 50%),
-        radial-gradient(1.5px 1.5px at 57% 44%, rgba(255,255,255,.72) 45%, transparent 50%),
-        radial-gradient(1.7px 1.7px at 72% 20%, rgba(255,255,255,.82) 45%, transparent 50%),
-        radial-gradient(1.4px 1.4px at 88% 34%, rgba(255,255,255,.68) 45%, transparent 50%),
-        radial-gradient(1.4px 1.4px at 79% 70%, rgba(255,255,255,.66) 45%, transparent 50%),
-        radial-gradient(1.5px 1.5px at 33% 78%, rgba(255,255,255,.7) 45%, transparent 50%);
-      animation: sky-twinkle 5.2s ease-in-out infinite alternate;
-    }
-
-    .stars-bg::before {
-      background-image:
-        radial-gradient(1px 1px at 4% 52%, rgba(255,255,255,.55) 45%, transparent 50%),
-        radial-gradient(1px 1px at 12% 86%, rgba(210,229,255,.48) 45%, transparent 50%),
-        radial-gradient(1px 1px at 18% 64%, rgba(255,255,255,.42) 45%, transparent 50%),
-        radial-gradient(1px 1px at 28% 8%, rgba(236,246,255,.6) 45%, transparent 50%),
-        radial-gradient(1px 1px at 45% 72%, rgba(255,255,255,.46) 45%, transparent 50%),
-        radial-gradient(1px 1px at 64% 62%, rgba(203,225,255,.5) 45%, transparent 50%),
-        radial-gradient(1px 1px at 76% 11%, rgba(255,255,255,.52) 45%, transparent 50%),
-        radial-gradient(1px 1px at 92% 78%, rgba(227,240,255,.42) 45%, transparent 50%);
-      opacity: .9;
-      animation: star-drift 42s linear infinite;
-    }
-
-    .stars-bg::after {
-      background:
-        radial-gradient(ellipse at 48% 38%, rgba(185, 218, 255, .12), transparent 32%),
-        radial-gradient(ellipse at 30% 58%, rgba(244, 176, 211, .06), transparent 34%),
-        linear-gradient(112deg, transparent 8%, rgba(126, 178, 255, .08) 35%, rgba(250, 181, 218, .05) 51%, transparent 72%);
-      opacity: .86;
-      mix-blend-mode: screen;
-    }
-
-    @keyframes sky-twinkle {
-      0%, 100% { opacity: .75; }
-      50% { opacity: 1; }
-    }
-
-    @keyframes star-drift {
-      0% { transform: translate3d(0, 0, 0); }
-      100% { transform: translate3d(-18px, 14px, 0); }
-    }
-
-    .atmosphere {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    .atmosphere::before {
-      content: "";
-      position: absolute;
-      width: 128vw;
-      height: 48vh;
-      left: -14vw;
-      top: 8vh;
-      background:
-        radial-gradient(ellipse at 26% 42%, rgba(87, 148, 255, .2), transparent 42%),
-        radial-gradient(ellipse at 58% 52%, rgba(255, 156, 205, .11), transparent 44%),
-        radial-gradient(ellipse at 82% 38%, rgba(127, 236, 255, .09), transparent 36%);
-      opacity: .75;
-      transform: rotate(-8deg);
-      animation: nebula-breathe 24s ease-in-out infinite alternate;
-    }
-
-    .atmosphere::after {
-      content: "";
-      position: absolute;
-      left: -12vw;
-      right: -12vw;
-      bottom: -11vh;
-      height: 34vh;
-      background:
-        radial-gradient(ellipse at 18% 60%, rgba(150, 184, 229, .18), transparent 54%),
-        radial-gradient(ellipse at 52% 42%, rgba(230, 242, 255, .13), transparent 50%),
-        radial-gradient(ellipse at 84% 65%, rgba(102, 154, 221, .18), transparent 56%);
-      opacity: .8;
-    }
-
-    .moon {
-      position: fixed;
-      top: clamp(28px, 8vh, 82px);
-      right: clamp(24px, 8vw, 118px);
-      width: clamp(58px, 7vw, 96px);
-      aspect-ratio: 1;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle at 34% 28%, rgba(255,255,255,.95), rgba(236,244,255,.94) 36%, rgba(184, 207, 237, .88) 100%);
-      box-shadow:
-        0 0 26px rgba(210, 229, 255, .36),
-        0 0 74px rgba(116, 169, 255, .22);
-      pointer-events: none;
-      z-index: 1;
-      opacity: .9;
-    }
-
-    .moon::before {
-      content: "";
-      position: absolute;
-      inset: 12%;
-      border-radius: inherit;
-      background:
-        radial-gradient(circle at 30% 34%, rgba(116, 139, 171, .16) 0 7%, transparent 8%),
-        radial-gradient(circle at 64% 30%, rgba(116, 139, 171, .12) 0 9%, transparent 10%),
-        radial-gradient(circle at 55% 67%, rgba(116, 139, 171, .14) 0 11%, transparent 12%);
-      opacity: .85;
-    }
-
-    .shooting-star {
-      position: fixed;
-      width: clamp(78px, 13vw, 150px);
-      height: 1px;
-      border-radius: 999px;
-      background: linear-gradient(90deg, transparent, rgba(234, 246, 255, .12), rgba(255, 255, 255, .88));
-      box-shadow: 0 0 10px rgba(185, 220, 255, .58);
-      transform: rotate(-28deg);
-      transform-origin: right center;
-      pointer-events: none;
-      z-index: 2;
-      opacity: 0;
-      animation: shooting-star 11s linear infinite;
-    }
-
-    .shooting-star::after {
-      content: "";
-      position: absolute;
-      right: -2px;
-      top: 50%;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.95);
-      transform: translateY(-50%);
-      box-shadow: 0 0 12px rgba(220, 238, 255, .9);
-    }
-
-    .shooting-star.s1 { top: 18%; left: 92%; animation-delay: 1.8s; }
-    .shooting-star.s2 { top: 34%; left: 104%; animation-delay: 6.4s; animation-duration: 14s; }
-    .shooting-star.s3 { top: 10%; left: 76%; animation-delay: 10.2s; animation-duration: 16s; }
-
-    @keyframes nebula-breathe {
-      0% { opacity: .52; transform: translate3d(-1.5vw, -1vh, 0) rotate(-8deg); }
-      100% { opacity: .82; transform: translate3d(1.5vw, 1vh, 0) rotate(-6deg); }
-    }
-
-    @keyframes shooting-star {
-      0%, 70% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-28deg); }
-      73% { opacity: .95; }
-      84% { opacity: .72; }
-      100% { opacity: 0; transform: translate3d(-82vw, 48vh, 0) rotate(-28deg); }
-    }
-
-    .sky {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      z-index: 2;
-    }
-
-    .fx-canvas {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    .star {
-      position: absolute;
-      width: clamp(62px, 10vw, 88px);
-      aspect-ratio: 1;
-      border: none;
-      background: transparent;
-      cursor: pointer;
-      transform: translate(-50%, -50%);
-      z-index: 4;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .star-shape {
-      position: absolute;
-      inset: 0;
-      display: grid;
-      place-items: center;
-      font-size: clamp(3.1rem, 9.8vw, 4.2rem);
-      color: #e8f3ff;
-      text-shadow:
-        0 0 10px rgba(198, 219, 246, .86),
-        0 0 22px rgba(150, 184, 226, .58),
-        0 0 38px rgba(125, 162, 207, .36);
-      animation: star-breathe 2.8s ease-in-out infinite;
-    }
-
-    .star .letter {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: 1.55em;
-      height: 1.55em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      font-size: clamp(.9rem, 3.2vw, 1.05rem);
-      line-height: 1;
-      color: #152747;
-      opacity: 0;
-      transform: translate(-50%, calc(-50% + 8px));
-      transition: opacity .4s ease, transform .4s ease;
-    }
-
-    .star.revealed .letter {
-      opacity: 1;
-      transform: translate(-50%, -50%);
-    }
-
-    .star.revealed .star-shape {
-      animation: star-pop .56s ease forwards;
-      color: #f4d98f;
-    }
-
-    .star.hidden { opacity: 0; pointer-events: none; transition: opacity .28s ease; }
-
-    @keyframes star-breathe {
-      0%, 100% { transform: scale(.98); }
-      50% { transform: scale(1.08); }
-    }
-
-    @keyframes star-pop {
-      0% { transform: scale(1); }
-      35% { transform: scale(1.34); filter: brightness(1.2); }
-      100% { transform: scale(1.05); }
-    }
-
-    .comet {
-      position: absolute;
-      width: clamp(22px, 5.4vw, 28px);
-      height: clamp(22px, 5.4vw, 28px);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      background: radial-gradient(circle at 33% 30%, #ffffff 0%, #e6f2ff 32%, #bad2ef 72%, rgba(145, 174, 214, .2) 100%);
-      box-shadow: 0 0 14px rgba(196, 220, 249, .8), 0 0 34px rgba(151, 187, 231, .4);
-      z-index: 6;
-      pointer-events: none;
-    }
-
-    .heart-text {
-      position: fixed;
-      inset: 0;
-      transform-origin: 50% 52%;
-      opacity: 0;
-      pointer-events: none;
-      z-index: 3;
-      transition: opacity 900ms ease;
-    }
-
-    .heart-constellation {
-      --heart-w: 84%;
-      --heart-h: 32%;
-      --heart-y: 50%;
-      position: absolute;
-      left: 50%;
-      top: var(--heart-y);
-      width: var(--heart-w);
-      height: var(--heart-h);
-      transform: translate3d(-50%, -50%, 0) scale(1);
-      transform-origin: 50% 50%;
-      filter: drop-shadow(0 0 14px rgba(134, 190, 255, .28)) drop-shadow(0 0 28px rgba(255, 142, 190, .18));
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-      transform-style: preserve-3d;
-      contain: layout paint;
-    }
-
-    .heart-text.revealing,
-    .heart-text.show {
-      opacity: 1;
-    }
-
-    .heart-text.show {
-      will-change: opacity;
-    }
-
-    .heart-constellation {
-      contain: layout paint style;
-      transform: translate3d(-50%, -50%, 0);
-    }
-
-    .heart-text.show .heart-constellation {
-      animation: constellation-pulse 8400ms linear 900ms infinite;
-      will-change: transform;
-    }
-
-    .constellation-svg {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      overflow: visible;
-    }
-
-    .constellation-curve {
-      fill: none;
-      stroke: rgba(255, 171, 206, .56);
-      stroke-width: 1.45;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      opacity: 0;
-      vector-effect: non-scaling-stroke;
-    }
-
-    .constellation-curve.soft {
-      stroke: rgba(255, 194, 220, .32);
-      stroke-width: .85;
-    }
-
-    .heart-text.show .constellation-curve {
-      animation: constellation-curve-draw 1900ms cubic-bezier(.2,.74,.18,1) 250ms forwards;
-    }
-
-    .constellation-line {
-      stroke: rgba(188, 220, 255, .72);
-      stroke-width: 1.12;
-      stroke-linecap: round;
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      opacity: 0;
-      vector-effect: non-scaling-stroke;
-    }
-
-    .constellation-line.accent {
-      stroke: rgba(255, 172, 205, .62);
-      stroke-width: 1.28;
-    }
-
-    .constellation-line.active {
-      animation: constellation-line-draw 760ms ease-out forwards;
-      animation-delay: var(--line-delay, 0ms);
-    }
-
-    .constellation-node {
-      position: absolute;
-      width: 2.35em;
-      height: 2.35em;
-      display: grid;
-      place-items: center;
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(.82) translateZ(0);
-      transform-origin: 50% 50%;
-      pointer-events: none;
-      user-select: none;
-      color: rgba(243, 248, 255, .94);
-      font-family: "Segoe UI Symbol", "Apple Color Emoji", Georgia, serif;
-      font-size: clamp(28px, 3.35vw, 44px);
-      font-weight: 700;
-      line-height: 1;
-      text-align: center;
-      text-shadow:
-        0 0 7px rgba(205, 224, 246, .4),
-        0 0 14px rgba(255, 184, 212, .1);
-      will-change: opacity, transform;
-    }
-
-    .constellation-node::before {
-      content: "✦";
-      display: block;
-    }
-
-    .constellation-node.active {
-      animation: constellation-node-born 760ms cubic-bezier(.2,.72,.18,1) forwards;
-    }
-
-    .constellation-love {
-      position: absolute;
-      left: 50%;
-      top: 52.5%;
-      width: min(56vw, 360px);
-      max-width: 74%;
-      transform: translate(-50%, -50%) scale(.94);
-      opacity: 0;
-      color: #ffd1df;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(24px, 4.8vw, 56px);
-      font-weight: 700;
-      letter-spacing: .018em;
-      line-height: 1.02;
-      text-align: center;
-      white-space: normal;
-      text-wrap: balance;
-      text-shadow:
-        0 0 10px rgba(255, 188, 213, .56),
-        0 0 28px rgba(255, 114, 169, .28),
-        0 4px 16px rgba(4, 9, 20, .46);
-    }
-
-    .heart-text.show .constellation-love {
-      animation:
-        love-appear 1600ms cubic-bezier(.16,.76,.18,1) 650ms forwards,
-        love-glow 5400ms ease-in-out 2300ms infinite;
-    }
-
-    @keyframes constellation-node-born {
-      0% {
-        opacity: 0;
-        transform: translate(-50%, -50%) scale(.56) translateZ(0);
-        color: rgba(232, 243, 255, .82);
-      }
-      45% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1.28) translateZ(0);
-        color: rgba(244, 217, 143, .97);
-        text-shadow:
-          0 0 7px rgba(244, 217, 143, .44),
-          0 0 14px rgba(198, 219, 246, .28);
-      }
-      100% {
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1) translateZ(0);
-        color: rgba(244, 217, 143, .92);
-        text-shadow:
-          0 0 5px rgba(244, 217, 143, .32),
-          0 0 10px rgba(198, 219, 246, .22);
-      }
-    }
-
-    @keyframes constellation-line-draw {
-      0% { opacity: 0; stroke-dashoffset: 1; }
-      100% { opacity: 1; stroke-dashoffset: 0; }
-    }
-
-    @keyframes constellation-curve-draw {
-      0% { opacity: 0; stroke-dashoffset: 1; }
-      55% { opacity: .62; }
-      100% { opacity: .5; stroke-dashoffset: 0; }
-    }
-
-    @keyframes love-appear {
-      0% { opacity: 0; transform: translate(-50%, -50%) scale(.9); filter: blur(5px); }
-      100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
-    }
-
-    @keyframes love-glow {
-      0%, 100% { color: #ffd1df; text-shadow: 0 0 12px rgba(255,188,213,.58), 0 0 34px rgba(255,114,169,.3), 0 4px 18px rgba(4,9,20,.48); }
-      50% { color: #fff0f6; text-shadow: 0 0 18px rgba(255,218,231,.82), 0 0 48px rgba(255,128,180,.46), 0 4px 18px rgba(4,9,20,.42); }
-    }
-
-    @keyframes constellation-pulse {
-      0%, 100% {
-        transform: translate3d(-50%, -50%, 0) scale(1);
-      }
-      50% {
-        transform: translate3d(-50%, -50%, 0) scale(1.028);
-      }
-    }
-
-    .status {
-      position: fixed;
-      left: 50%;
-      bottom: 14px;
-      bottom: calc(14px + env(safe-area-inset-bottom));
-      transform: translateX(-50%);
-      color: #edf6ff;
-      font-weight: 700;
-      letter-spacing: .4px;
-      text-shadow: 0 2px 8px rgba(17, 28, 49, .55);
-      background: rgba(8, 19, 37, .4);
-      border: 1px solid rgba(178, 203, 236, .32);
-      border-radius: 999px;
-      padding: 8px 16px;
-      max-width: calc(100vw - 24px);
-      white-space: nowrap;
-      font-size: clamp(12px, 3.6vw, 16px);
-      backdrop-filter: blur(7px);
-      z-index: 20;
-    }
-
-    .quality-toggle {
-      position: fixed;
-      right: 14px;
-      bottom: calc(14px + env(safe-area-inset-bottom));
-      z-index: 21;
-      color: #eaf2ff;
-      font: 700 clamp(11px, 3.2vw, 14px)/1 "Segoe UI", sans-serif;
-      letter-spacing: .2px;
-      background: rgba(8, 19, 37, .42);
-      border: 1px solid rgba(178, 203, 236, .32);
-      border-radius: 999px;
-      padding: 9px 13px;
-      cursor: pointer;
-      backdrop-filter: blur(7px);
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    .orientation-hint {
-      position: fixed;
-      inset: 0;
-      z-index: 60;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 28px;
-      text-align: center;
-      color: #f4f8ff;
-      background:
-        radial-gradient(circle at 50% 36%, rgba(143, 188, 255, .2), transparent 36%),
-        radial-gradient(circle at 50% 66%, rgba(255, 145, 191, .14), transparent 38%),
-        rgba(3, 8, 18, .86);
-      backdrop-filter: blur(10px);
-      pointer-events: auto;
-    }
-
-    body.needs-rotation .orientation-hint {
-      display: flex;
-    }
-
-    body.needs-rotation .sky,
-    body.needs-rotation .quality-toggle {
-      pointer-events: none;
-    }
-
-    .orientation-card {
-      width: min(86vw, 360px);
-      border: 1px solid rgba(211, 228, 255, .26);
-      border-radius: 30px;
-      padding: 30px 24px 28px;
-      background: rgba(9, 20, 40, .58);
-      box-shadow:
-        0 18px 60px rgba(0, 0, 0, .38),
-        inset 0 1px 0 rgba(255, 255, 255, .08);
-    }
-
-    .orientation-icon {
-      display: block;
-      width: 70px;
-      height: 42px;
-      margin: 0 auto 18px;
-      border: 3px solid rgba(244, 248, 255, .88);
-      border-radius: 12px;
-      box-shadow:
-        0 0 18px rgba(190, 220, 255, .46),
-        0 0 36px rgba(255, 145, 191, .24);
-      animation: phone-tilt 2400ms ease-in-out infinite;
-    }
-
-    .orientation-title {
-      margin: 0 0 8px;
-      font-family: Georgia, "Times New Roman", serif;
-      font-size: clamp(28px, 8vw, 42px);
-      font-weight: 700;
-      letter-spacing: .02em;
-      text-shadow: 0 0 20px rgba(255, 188, 213, .38);
-    }
-
-    .orientation-subtitle {
-      margin: 0;
-      color: rgba(230, 240, 255, .78);
-      font-size: 14px;
-      line-height: 1.45;
-    }
-
-    @keyframes phone-tilt {
-      0%, 100% { transform: rotate(0deg) scale(1); }
-      45% { transform: rotate(90deg) scale(1.04); }
-      70% { transform: rotate(90deg) scale(1.04); }
-    }
-
-    @keyframes constellation-pulse-mobile {
-      0%, 100% { transform: translate3d(-50%, -50%, 0) scale(1); }
-      50% { transform: translate3d(-50%, -50%, 0) scale(1.018); }
-    }
-
-    @media (max-width: 560px), (hover: none) and (pointer: coarse) {
-      .stars-bg::before {
-        animation: none;
-        opacity: .58;
-      }
-
-      .atmosphere::before {
-        animation: none;
-        opacity: .38;
-      }
-
-      .atmosphere::after {
-        opacity: .45;
-      }
-
-      .moon {
-        top: 34px;
-        right: 24px;
-        width: 54px;
-        opacity: .7;
-        box-shadow: 0 0 22px rgba(210, 229, 255, .24);
-      }
-
-      .shooting-star {
-        display: none;
-      }
-
-      .shooting-star.s1 {
-        display: block;
-        animation-duration: 18s;
-      }
-
-      .comet {
-        box-shadow: 0 0 10px rgba(196, 220, 249, .62), 0 0 20px rgba(151, 187, 231, .24);
-      }
-
-      .heart-constellation {
-        filter: none;
-      }
-
-      .heart-text.show .heart-constellation {
-        animation: constellation-pulse-mobile 8200ms ease-in-out 700ms infinite;
-      }
-
-      .star .letter {
-        top: 50.5%;
-        font-size: clamp(.86rem, 3.6vw, 1rem);
-      }
-
-      .constellation-line {
-        stroke-width: .95;
-        filter: none;
-      }
-
-      .constellation-line.accent {
-        stroke-width: 1.08;
-      }
-
-      .constellation-curve {
-        stroke-width: 1.08;
-        filter: none;
-      }
-
-      .constellation-curve.soft {
-        stroke-width: .72;
-      }
-
-      .constellation-node {
-        width: 2.2em;
-        height: 2.2em;
-        font-size: clamp(24px, 7.2vw, 36px);
-        filter: none;
-      }
-
-      .constellation-node .node-halo {
-        opacity: .34;
-      }
-
-      .constellation-node .node-glow {
-        opacity: .32;
-      }
-
-      .constellation-love {
-        top: 53.5%;
-        width: 64vw;
-        max-width: 72%;
-        font-size: clamp(22px, 7.1vw, 34px);
-        line-height: 1.02;
-        letter-spacing: .015em;
-        text-shadow:
-          0 0 9px rgba(255, 188, 213, .48),
-          0 0 20px rgba(255, 114, 169, .22);
-      }
-
-      .status {
-        backdrop-filter: none;
-        background: rgba(8, 19, 37, .66);
-      }
-
-      .quality-toggle {
-        right: 10px;
-        bottom: calc(58px + env(safe-area-inset-bottom));
-        padding: 8px 11px;
-        backdrop-filter: none;
-        background: rgba(8, 19, 37, .66);
-      }
-
-      .orientation-hint {
-        backdrop-filter: none;
-      }
-    }
-
-    body[data-quality="smooth"] .shooting-star:not(.s1) {
-      display: none;
-    }
-
-    body[data-quality="smooth"] .stars-bg::before,
-    body[data-quality="smooth"] .atmosphere::before {
-      animation: none;
-    }
-
-    body[data-quality="smooth"] .quality-toggle {
-      background: rgba(18, 38, 70, .72);
-    }
-
-    @media (max-width: 560px), (hover: none) and (pointer: coarse) {
-      body[data-quality="beauty"] .shooting-star {
-        display: block;
-      }
-
-      body[data-quality="beauty"] .atmosphere::before {
-        animation: nebula-breathe 24s ease-in-out infinite alternate;
-      }
-    }
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ночное сердце</title>
+    <style>
+        :root {
+            --bg-top: #040914;
+            --bg-mid: #0a1c3d;
+            --bg-bot: #173f79;
+            --text: #eaf2ff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow: hidden;
+            position: relative;
+            font-family: "Segoe UI", sans-serif;
+            color: var(--text);
+            background:
+                    radial-gradient(1200px 760px at 16% 16%, rgba(106, 135, 255, .20), transparent 58%),
+                    radial-gradient(980px 640px at 84% 18%, rgba(104, 217, 255, .16), transparent 58%),
+                    radial-gradient(860px 560px at 52% 36%, rgba(255, 154, 204, .08), transparent 62%),
+                    radial-gradient(1400px 860px at 50% 118%, rgba(94, 135, 230, .38), transparent 63%),
+                    linear-gradient(180deg, #030712 0%, #08152d 24%, #0c1f44 56%, #173f79 100%);
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        body::before {
+            z-index: 0;
+            background:
+                    radial-gradient(ellipse at center, transparent 42%, rgba(2, 7, 16, .10) 68%, rgba(2, 7, 16, .28) 100%),
+                    linear-gradient(180deg, rgba(255,255,255,.02), transparent 34%, rgba(3, 9, 20, .10) 100%);
+            mix-blend-mode: normal;
+        }
+
+        body::after {
+            z-index: 0;
+            background:
+                    radial-gradient(900px 320px at 24% 82%, rgba(255, 182, 214, .07), transparent 62%),
+                    radial-gradient(1100px 360px at 76% 78%, rgba(126, 196, 255, .08), transparent 62%),
+                    linear-gradient(115deg, transparent 16%, rgba(163, 213, 255, .05) 43%, rgba(255, 179, 214, .04) 58%, transparent 78%);
+            opacity: .95;
+        }
+
+        .stars-bg,
+        .stars-bg::before,
+        .stars-bg::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .stars-bg {
+            z-index: 0;
+            background-image:
+                    radial-gradient(1.8px 1.8px at 8% 17%, rgba(255,255,255,.86) 45%, transparent 50%),
+                    radial-gradient(1.5px 1.5px at 25% 36%, rgba(255,255,255,.76) 45%, transparent 50%),
+                    radial-gradient(1.7px 1.7px at 41% 16%, rgba(255,255,255,.78) 45%, transparent 50%),
+                    radial-gradient(1.5px 1.5px at 57% 44%, rgba(255,255,255,.74) 45%, transparent 50%),
+                    radial-gradient(1.8px 1.8px at 72% 20%, rgba(255,255,255,.84) 45%, transparent 50%),
+                    radial-gradient(1.4px 1.4px at 88% 34%, rgba(255,255,255,.70) 45%, transparent 50%),
+                    radial-gradient(1.4px 1.4px at 79% 70%, rgba(255,255,255,.68) 45%, transparent 50%),
+                    radial-gradient(1.5px 1.5px at 33% 78%, rgba(255,255,255,.72) 45%, transparent 50%),
+                    radial-gradient(1.6px 1.6px at 63% 11%, rgba(214,233,255,.80) 45%, transparent 50%),
+                    radial-gradient(1.5px 1.5px at 15% 61%, rgba(255,231,242,.64) 45%, transparent 50%),
+                    radial-gradient(1.4px 1.4px at 93% 63%, rgba(214,233,255,.62) 45%, transparent 50%),
+                    radial-gradient(1.3px 1.3px at 47% 83%, rgba(255,255,255,.58) 45%, transparent 50%);
+            animation: sky-twinkle 5.8s ease-in-out infinite alternate;
+        }
+
+        .stars-bg::before {
+            background-image:
+                    radial-gradient(1px 1px at 4% 52%, rgba(255,255,255,.55) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 12% 86%, rgba(210,229,255,.48) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 18% 64%, rgba(255,255,255,.42) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 28% 8%, rgba(236,246,255,.6) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 45% 72%, rgba(255,255,255,.46) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 64% 62%, rgba(203,225,255,.5) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 76% 11%, rgba(255,255,255,.52) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 92% 78%, rgba(227,240,255,.42) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 22% 25%, rgba(255, 226, 239, .38) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 58% 28%, rgba(222, 239, 255, .42) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 71% 84%, rgba(255,255,255,.34) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 86% 52%, rgba(214,231,255,.36) 45%, transparent 50%);
+            opacity: .92;
+            animation: star-drift 52s linear infinite;
+        }
+
+        .stars-bg::after {
+            background:
+                    radial-gradient(ellipse at 48% 38%, rgba(185, 218, 255, .14), transparent 32%),
+                    radial-gradient(ellipse at 30% 58%, rgba(244, 176, 211, .08), transparent 34%),
+                    radial-gradient(ellipse at 68% 18%, rgba(165, 232, 255, .08), transparent 28%),
+                    linear-gradient(112deg, transparent 10%, rgba(126, 178, 255, .09) 34%, rgba(250, 181, 218, .06) 52%, transparent 74%);
+            opacity: .92;
+            mix-blend-mode: screen;
+        }
+
+        @keyframes sky-twinkle {
+            0%, 100% { opacity: .75; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes star-drift {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-18px, 14px, 0); }
+        }
+
+        .atmosphere {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .atmosphere::before {
+            content: "";
+            position: absolute;
+            width: 132vw;
+            height: 52vh;
+            left: -16vw;
+            top: 6vh;
+            background:
+                    radial-gradient(ellipse at 24% 44%, rgba(87, 148, 255, .24), transparent 42%),
+                    radial-gradient(ellipse at 56% 52%, rgba(255, 156, 205, .13), transparent 44%),
+                    radial-gradient(ellipse at 82% 38%, rgba(127, 236, 255, .11), transparent 36%),
+                    radial-gradient(ellipse at 42% 28%, rgba(220, 235, 255, .08), transparent 24%);
+            opacity: .8;
+            filter: blur(2px);
+            transform: rotate(-8deg);
+            animation: nebula-breathe 24s ease-in-out infinite alternate;
+        }
+
+        .atmosphere::after {
+            content: "";
+            position: absolute;
+            left: -12vw;
+            right: -12vw;
+            bottom: -11vh;
+            height: 36vh;
+            background:
+                    radial-gradient(ellipse at 18% 60%, rgba(150, 184, 229, .20), transparent 54%),
+                    radial-gradient(ellipse at 52% 42%, rgba(230, 242, 255, .15), transparent 50%),
+                    radial-gradient(ellipse at 84% 65%, rgba(102, 154, 221, .19), transparent 56%),
+                    radial-gradient(ellipse at 58% 84%, rgba(255, 183, 216, .08), transparent 40%);
+            opacity: .84;
+        }
+
+
+        .aurora,
+        .aurora::before,
+        .aurora::after,
+        .dust,
+        .dust::before,
+        .dust::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .aurora {
+            z-index: 1;
+            overflow: hidden;
+            mix-blend-mode: screen;
+            opacity: .92;
+        }
+
+        .aurora::before {
+            inset: auto;
+            left: -12vw;
+            top: 2vh;
+            width: 78vw;
+            height: 36vh;
+            border-radius: 50%;
+            background:
+                    radial-gradient(ellipse at 18% 50%, rgba(111, 196, 255, .13), transparent 34%),
+                    radial-gradient(ellipse at 42% 44%, rgba(255, 165, 214, .10), transparent 30%),
+                    radial-gradient(ellipse at 70% 50%, rgba(115, 255, 234, .09), transparent 28%);
+            filter: blur(16px);
+            transform: rotate(-8deg);
+            animation: aurora-wave 26s ease-in-out infinite alternate;
+        }
+
+        .aurora::after {
+            inset: auto;
+            right: -10vw;
+            top: 12vh;
+            width: 66vw;
+            height: 28vh;
+            border-radius: 50%;
+            background:
+                    radial-gradient(ellipse at 38% 48%, rgba(125, 184, 255, .12), transparent 32%),
+                    radial-gradient(ellipse at 62% 42%, rgba(255, 183, 221, .09), transparent 28%),
+                    radial-gradient(ellipse at 78% 46%, rgba(190, 239, 255, .08), transparent 24%);
+            filter: blur(18px);
+            transform: rotate(7deg);
+            animation: aurora-wave-2 30s ease-in-out infinite alternate;
+        }
+
+        .dust {
+            z-index: 1;
+            opacity: .6;
+        }
+
+        .dust::before {
+            background-image:
+                    radial-gradient(1.4px 1.4px at 7% 28%, rgba(255,255,255,.36) 45%, transparent 50%),
+                    radial-gradient(1.2px 1.2px at 18% 18%, rgba(219,235,255,.28) 45%, transparent 50%),
+                    radial-gradient(1.3px 1.3px at 32% 46%, rgba(255,238,247,.24) 45%, transparent 50%),
+                    radial-gradient(1.2px 1.2px at 48% 26%, rgba(255,255,255,.22) 45%, transparent 50%),
+                    radial-gradient(1.3px 1.3px at 66% 58%, rgba(208,229,255,.24) 45%, transparent 50%),
+                    radial-gradient(1.1px 1.1px at 79% 24%, rgba(255,241,246,.22) 45%, transparent 50%),
+                    radial-gradient(1.3px 1.3px at 88% 48%, rgba(225,238,255,.24) 45%, transparent 50%),
+                    radial-gradient(1.2px 1.2px at 57% 78%, rgba(255,255,255,.20) 45%, transparent 50%),
+                    radial-gradient(1.2px 1.2px at 24% 76%, rgba(225,238,255,.24) 45%, transparent 50%);
+            animation: dust-drift 58s linear infinite, dust-twinkle 8.5s ease-in-out infinite alternate;
+        }
+
+        .dust::after {
+            background-image:
+                    radial-gradient(1px 1px at 10% 60%, rgba(255,255,255,.18) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 26% 34%, rgba(222,236,255,.18) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 38% 14%, rgba(255,232,242,.16) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 52% 40%, rgba(255,255,255,.16) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 72% 68%, rgba(214,232,255,.18) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 84% 18%, rgba(255,243,249,.14) 45%, transparent 50%),
+                    radial-gradient(1px 1px at 92% 56%, rgba(255,255,255,.16) 45%, transparent 50%);
+            opacity: .8;
+            animation: dust-drift-2 74s linear infinite reverse, dust-twinkle 10.5s ease-in-out infinite alternate;
+        }
+
+        .moon {
+            position: fixed;
+            top: clamp(28px, 8vh, 82px);
+            right: clamp(24px, 8vw, 118px);
+            width: clamp(58px, 7vw, 96px);
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background:
+                    radial-gradient(circle at 34% 28%, rgba(255,255,255,.95), rgba(236,244,255,.94) 36%, rgba(184, 207, 237, .88) 100%);
+            box-shadow:
+                    0 0 26px rgba(210, 229, 255, .36),
+                    0 0 74px rgba(116, 169, 255, .22);
+            pointer-events: none;
+            z-index: 1;
+            opacity: .9;
+        }
+
+        .moon::before {
+            content: "";
+            position: absolute;
+            inset: 12%;
+            border-radius: inherit;
+            background:
+                    radial-gradient(circle at 30% 34%, rgba(116, 139, 171, .16) 0 7%, transparent 8%),
+                    radial-gradient(circle at 64% 30%, rgba(116, 139, 171, .12) 0 9%, transparent 10%),
+                    radial-gradient(circle at 55% 67%, rgba(116, 139, 171, .14) 0 11%, transparent 12%);
+            opacity: .85;
+        }
+
+        .shooting-star {
+            position: fixed;
+            width: clamp(78px, 13vw, 150px);
+            height: 1px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, transparent, rgba(234, 246, 255, .12), rgba(255, 255, 255, .88));
+            box-shadow: 0 0 10px rgba(185, 220, 255, .58);
+            transform: rotate(-28deg);
+            transform-origin: right center;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            animation: shooting-star 11s linear infinite;
+        }
+
+        .shooting-star::after {
+            content: "";
+            position: absolute;
+            right: -2px;
+            top: 50%;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(255,255,255,.95);
+            transform: translateY(-50%);
+            box-shadow: 0 0 12px rgba(220, 238, 255, .9);
+        }
+
+        .shooting-star.s1 { top: 18%; left: 92%; animation-delay: 1.8s; }
+        .shooting-star.s2 { top: 34%; left: 104%; animation-delay: 6.4s; animation-duration: 14s; }
+        .shooting-star.s3 { top: 10%; left: 76%; animation-delay: 10.2s; animation-duration: 16s; }
+
+        @keyframes nebula-breathe {
+            0% { opacity: .52; transform: translate3d(-1.5vw, -1vh, 0) rotate(-8deg); }
+            100% { opacity: .82; transform: translate3d(1.5vw, 1vh, 0) rotate(-6deg); }
+        }
+
+        @keyframes aurora-wave {
+            0% { opacity: .34; transform: translate3d(-1.8vw, 0, 0) rotate(-10deg) scale(1); }
+            50% { opacity: .56; }
+            100% { opacity: .48; transform: translate3d(2.4vw, 1.2vh, 0) rotate(-6deg) scale(1.04); }
+        }
+
+        @keyframes aurora-wave-2 {
+            0% { opacity: .28; transform: translate3d(1.5vw, -.6vh, 0) rotate(8deg) scale(1); }
+            50% { opacity: .46; }
+            100% { opacity: .4; transform: translate3d(-2.1vw, 1vh, 0) rotate(4deg) scale(1.06); }
+        }
+
+        @keyframes dust-drift {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-24px, 14px, 0); }
+        }
+
+        @keyframes dust-drift-2 {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(18px, -12px, 0); }
+        }
+
+        @keyframes dust-twinkle {
+            0%, 100% { opacity: .35; }
+            50% { opacity: .72; }
+        }
+
+        @keyframes shooting-star {
+            0%, 70% { opacity: 0; transform: translate3d(0, 0, 0) rotate(-28deg); }
+            73% { opacity: .95; }
+            84% { opacity: .72; }
+            100% { opacity: 0; transform: translate3d(-82vw, 48vh, 0) rotate(-28deg); }
+        }
+
+        .sky {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .fx-canvas {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .star {
+            position: absolute;
+            width: clamp(62px, 10vw, 88px);
+            aspect-ratio: 1;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            z-index: 4;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .star-shape {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            font-size: clamp(3.1rem, 9.8vw, 4.2rem);
+            color: #e8f3ff;
+            text-shadow:
+                    0 0 10px rgba(198, 219, 246, .86),
+                    0 0 22px rgba(150, 184, 226, .58),
+                    0 0 38px rgba(125, 162, 207, .36);
+            animation: star-breathe 2.8s ease-in-out infinite;
+        }
+
+        .star .letter {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: 1.55em;
+            height: 1.55em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: clamp(.9rem, 3.2vw, 1.05rem);
+            line-height: 1;
+            color: #152747;
+            opacity: 0;
+            transform: translate(-50%, calc(-50% + 8px));
+            transition: opacity .4s ease, transform .4s ease;
+        }
+
+        .star.revealed .letter {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+        }
+
+        .star.revealed .star-shape {
+            animation: star-pop .56s ease forwards;
+            color: #f4d98f;
+        }
+
+        .star.hidden { opacity: 0; pointer-events: none; transition: opacity .28s ease; }
+
+        @keyframes star-breathe {
+            0%, 100% { transform: scale(.98); }
+            50% { transform: scale(1.08); }
+        }
+
+        @keyframes star-pop {
+            0% { transform: scale(1); }
+            35% { transform: scale(1.34); filter: brightness(1.2); }
+            100% { transform: scale(1.05); }
+        }
+
+        .comet {
+            position: absolute;
+            width: clamp(24px, 5.8vw, 31px);
+            height: clamp(24px, 5.8vw, 31px);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            background:
+                    radial-gradient(circle at 36% 32%, rgba(255,255,255,.98) 0 14%, rgba(244,250,255,.96) 14% 30%, rgba(198,224,250,.92) 30% 58%, rgba(126,165,221,.55) 70%, rgba(126,165,221,0) 100%);
+            box-shadow:
+                    0 0 16px rgba(210, 232, 255, .9),
+                    0 0 34px rgba(157, 193, 238, .48),
+                    0 0 52px rgba(255, 189, 216, .14);
+            z-index: 6;
+            pointer-events: none;
+        }
+
+        .comet::before {
+            content: "";
+            position: absolute;
+            inset: 18%;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,.98) 0%, rgba(255,248,253,.86) 38%, rgba(255,255,255,0) 78%);
+            opacity: .95;
+            mix-blend-mode: screen;
+        }
+
+        .heart-text {
+            position: fixed;
+            inset: 0;
+            transform-origin: 50% 52%;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 3;
+            transition: opacity 900ms ease;
+        }
+
+        .heart-constellation {
+            --heart-w: 84%;
+            --heart-h: 32%;
+            --heart-y: 50%;
+            position: absolute;
+            left: 50%;
+            top: var(--heart-y);
+            width: var(--heart-w);
+            height: var(--heart-h);
+            transform: translate3d(-50%, -50%, 0) scale(1);
+            transform-origin: 50% 50%;
+            filter: none;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transform-style: preserve-3d;
+            contain: layout paint;
+        }
+
+        .heart-text.revealing,
+        .heart-text.show {
+            opacity: 1;
+        }
+
+        .heart-text.show {
+            will-change: opacity;
+        }
+
+        .heart-constellation {
+            contain: layout paint style;
+            transform: translate3d(-50%, -50%, 0);
+        }
+
+        .heart-text.show .heart-constellation {
+            animation: constellation-pulse 8400ms linear 900ms infinite;
+            will-change: transform;
+        }
+
+        .constellation-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            overflow: visible;
+        }
+
+        .constellation-curve {
+            fill: none;
+            stroke: rgba(255, 171, 206, .56);
+            stroke-width: 1.45;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 1;
+            stroke-dashoffset: 1;
+            opacity: 0;
+            vector-effect: non-scaling-stroke;
+        }
+
+        .constellation-curve.soft {
+            stroke: rgba(255, 194, 220, .32);
+            stroke-width: .85;
+        }
+
+        .heart-text.show .constellation-curve {
+            animation: constellation-curve-draw 1900ms cubic-bezier(.2,.74,.18,1) 250ms forwards;
+        }
+
+        .constellation-line {
+            fill: none;
+            stroke: rgba(205, 230, 255, .82);
+            stroke-width: 1.04;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 2.4 4.6;
+            stroke-dashoffset: 10;
+            opacity: 0;
+            vector-effect: non-scaling-stroke;
+        }
+
+        .constellation-line.accent {
+            stroke: rgba(255, 188, 216, .78);
+            stroke-width: 1.16;
+            stroke-dasharray: 2.8 4.8;
+        }
+
+        .constellation-line.active {
+            animation: constellation-line-dashed-appear 760ms ease-out forwards;
+            animation-delay: var(--line-delay, 0ms);
+        }
+
+        .constellation-node {
+            position: absolute;
+            width: 3.66em;
+            height: 3.66em;
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(.82) translateZ(0);
+            transform-origin: 50% 50%;
+            pointer-events: none;
+            user-select: none;
+            color: rgba(243, 248, 255, .94);
+            font-family: "Segoe UI Symbol", "Apple Color Emoji", Georgia, serif;
+            font-size: clamp(43px, 5.2vw, 68px);
+            font-weight: 700;
+            line-height: 1;
+            text-align: center;
+            text-shadow:
+                    0 0 8px rgba(205, 224, 246, .42),
+                    0 0 16px rgba(255, 184, 212, .12);
+            will-change: opacity, transform;
+        }
+
+        .constellation-node::before {
+            content: "✦";
+            display: block;
+        }
+
+        .constellation-node.active {
+            animation: constellation-node-born 760ms cubic-bezier(.2,.72,.18,1) forwards;
+        }
+
+        .constellation-love {
+            position: absolute;
+            left: 50%;
+            top: 45.8%;
+            width: min(56vw, 360px);
+            max-width: 74%;
+            transform: translate(-50%, -50%) scale(.94);
+            opacity: 0;
+            color: #ffd1df;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(24px, 4.8vw, 56px);
+            font-weight: 700;
+            letter-spacing: .018em;
+            line-height: 1.02;
+            text-align: center;
+            white-space: normal;
+            text-wrap: balance;
+            text-shadow:
+                    0 0 10px rgba(255, 188, 213, .48),
+                    0 0 24px rgba(255, 114, 169, .22);
+        }
+
+        .heart-text.show .constellation-love {
+            animation:
+                    love-appear 1600ms cubic-bezier(.16,.76,.18,1) 650ms forwards,
+                    love-glow 5400ms ease-in-out 2300ms infinite;
+        }
+
+        @keyframes constellation-node-born {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(.56) translateZ(0);
+                color: rgba(232, 243, 255, .82);
+            }
+            45% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.28) translateZ(0);
+                color: rgba(244, 217, 143, .97);
+                text-shadow:
+                        0 0 7px rgba(244, 217, 143, .44),
+                        0 0 14px rgba(198, 219, 246, .28);
+            }
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1) translateZ(0);
+                color: rgba(244, 217, 143, .92);
+                text-shadow:
+                        0 0 5px rgba(244, 217, 143, .32),
+                        0 0 10px rgba(198, 219, 246, .22);
+            }
+        }
+
+        @keyframes constellation-line-dashed-appear {
+            0% { opacity: 0; stroke-dashoffset: 10; }
+            100% { opacity: 1; stroke-dashoffset: 0; }
+        }
+
+        @keyframes constellation-curve-draw {
+            0% { opacity: 0; stroke-dashoffset: 1; }
+            55% { opacity: .62; }
+            100% { opacity: .5; stroke-dashoffset: 0; }
+        }
+
+        @keyframes love-appear {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(.9); filter: blur(5px); }
+            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); filter: blur(0); }
+        }
+
+        @keyframes love-glow {
+            0%, 100% { color: #ffd1df; text-shadow: 0 0 12px rgba(255,188,213,.58), 0 0 34px rgba(255,114,169,.3), 0 4px 18px rgba(4,9,20,.48); }
+            50% { color: #fff0f6; text-shadow: 0 0 18px rgba(255,218,231,.82), 0 0 48px rgba(255,128,180,.46), 0 4px 18px rgba(4,9,20,.42); }
+        }
+
+        @keyframes constellation-pulse {
+            0%, 100% {
+                transform: translate3d(-50%, -50%, 0) scale(1);
+            }
+            50% {
+                transform: translate3d(-50%, -50%, 0) scale(1.028);
+            }
+        }
+
+        .status {
+            position: fixed;
+            left: 50%;
+            bottom: 14px;
+            bottom: calc(14px + env(safe-area-inset-bottom));
+            transform: translateX(-50%);
+            color: #edf6ff;
+            font-weight: 700;
+            letter-spacing: .4px;
+            text-shadow: 0 2px 8px rgba(17, 28, 49, .55);
+            background: rgba(8, 19, 37, .4);
+            border: 1px solid rgba(178, 203, 236, .32);
+            border-radius: 999px;
+            padding: 8px 16px;
+            max-width: calc(100vw - 24px);
+            white-space: nowrap;
+            font-size: clamp(12px, 3.6vw, 16px);
+            backdrop-filter: blur(7px);
+            z-index: 20;
+        }
+
+        .quality-toggle {
+            position: fixed;
+            right: 14px;
+            bottom: calc(14px + env(safe-area-inset-bottom));
+            z-index: 21;
+            color: #eaf2ff;
+            font: 700 clamp(11px, 3.2vw, 14px)/1 "Segoe UI", sans-serif;
+            letter-spacing: .2px;
+            background: rgba(8, 19, 37, .42);
+            border: 1px solid rgba(178, 203, 236, .32);
+            border-radius: 999px;
+            padding: 9px 13px;
+            cursor: pointer;
+            backdrop-filter: blur(7px);
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .orientation-hint {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 28px;
+            text-align: center;
+            color: #f4f8ff;
+            background:
+                    radial-gradient(circle at 50% 36%, rgba(143, 188, 255, .2), transparent 36%),
+                    radial-gradient(circle at 50% 66%, rgba(255, 145, 191, .14), transparent 38%),
+                    rgba(3, 8, 18, .86);
+            backdrop-filter: blur(10px);
+            pointer-events: auto;
+        }
+
+        body.needs-rotation .orientation-hint {
+            display: flex;
+        }
+
+        body.needs-rotation .sky,
+        body.needs-rotation .quality-toggle {
+            pointer-events: none;
+        }
+
+        .orientation-card {
+            width: min(86vw, 360px);
+            border: 1px solid rgba(211, 228, 255, .26);
+            border-radius: 30px;
+            padding: 30px 24px 28px;
+            background: rgba(9, 20, 40, .58);
+            box-shadow:
+                    0 18px 60px rgba(0, 0, 0, .38),
+                    inset 0 1px 0 rgba(255, 255, 255, .08);
+        }
+
+        .orientation-icon {
+            display: block;
+            width: 70px;
+            height: 42px;
+            margin: 0 auto 18px;
+            border: 3px solid rgba(244, 248, 255, .88);
+            border-radius: 12px;
+            box-shadow:
+                    0 0 18px rgba(190, 220, 255, .46),
+                    0 0 36px rgba(255, 145, 191, .24);
+            animation: phone-tilt 2400ms ease-in-out infinite;
+        }
+
+        .orientation-title {
+            margin: 0 0 8px;
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: clamp(28px, 8vw, 42px);
+            font-weight: 700;
+            letter-spacing: .02em;
+            text-shadow: 0 0 20px rgba(255, 188, 213, .38);
+        }
+
+        .orientation-subtitle {
+            margin: 0;
+            color: rgba(230, 240, 255, .78);
+            font-size: 14px;
+            line-height: 1.45;
+        }
+
+        @keyframes phone-tilt {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            45% { transform: rotate(90deg) scale(1.04); }
+            70% { transform: rotate(90deg) scale(1.04); }
+        }
+
+        @keyframes constellation-pulse-mobile {
+            0%, 100% { transform: translate3d(-50%, -50%, 0) scale(1); }
+            50% { transform: translate3d(-50%, -50%, 0) scale(1.018); }
+        }
+
+        @media (max-width: 560px), (hover: none) and (pointer: coarse) {
+            .stars-bg::before {
+                animation: none;
+                opacity: .58;
+            }
+
+            .atmosphere::before {
+                animation: none;
+                opacity: .38;
+            }
+
+            .atmosphere::after {
+                opacity: .45;
+            }
+
+            .moon {
+                top: 34px;
+                right: 24px;
+                width: 54px;
+                opacity: .7;
+                box-shadow: 0 0 22px rgba(210, 229, 255, .24);
+            }
+
+            .shooting-star {
+                display: none;
+            }
+
+            .shooting-star.s1 {
+                display: block;
+                animation-duration: 18s;
+            }
+
+            .comet {
+                box-shadow: 0 0 10px rgba(196, 220, 249, .62), 0 0 20px rgba(151, 187, 231, .24);
+            }
+
+            .heart-constellation {
+                filter: none;
+            }
+
+            .heart-text.show .heart-constellation {
+                animation: constellation-pulse-mobile 8200ms ease-in-out 700ms infinite;
+            }
+
+            .star .letter {
+                top: 50.5%;
+                font-size: clamp(.86rem, 3.6vw, 1rem);
+            }
+
+            .constellation-line {
+                stroke-width: .92;
+                stroke-dasharray: 2.1 4.1;
+                filter: none;
+            }
+
+            .constellation-line.accent {
+                stroke-width: 1.02;
+                stroke-dasharray: 2.4 4.3;
+            }
+
+            .constellation-curve {
+                stroke-width: 1.08;
+                filter: none;
+            }
+
+            .constellation-curve.soft {
+                stroke-width: .72;
+            }
+
+            .constellation-node {
+                width: 3.42em;
+                height: 3.42em;
+                font-size: clamp(37px, 11.2vw, 56px);
+                filter: none;
+            }
+
+            .constellation-node .node-halo {
+                opacity: .34;
+            }
+
+            .constellation-node .node-glow {
+                opacity: .32;
+            }
+
+            .constellation-love {
+                top: 46.8%;
+                width: 64vw;
+                max-width: 72%;
+                font-size: clamp(22px, 7.1vw, 34px);
+                line-height: 1.02;
+                letter-spacing: .015em;
+                text-shadow:
+                        0 0 9px rgba(255, 188, 213, .48),
+                        0 0 20px rgba(255, 114, 169, .22);
+            }
+
+            .status {
+                backdrop-filter: none;
+                background: rgba(8, 19, 37, .66);
+            }
+
+            .quality-toggle {
+                right: 10px;
+                bottom: calc(58px + env(safe-area-inset-bottom));
+                padding: 8px 11px;
+                backdrop-filter: none;
+                background: rgba(8, 19, 37, .66);
+            }
+
+            .orientation-hint {
+                backdrop-filter: none;
+            }
+        }
+
+        body[data-quality="smooth"] .shooting-star:not(.s1) {
+            display: none;
+        }
+
+        body[data-quality="smooth"] .stars-bg::before,
+        body[data-quality="smooth"] .atmosphere::before,
+        body[data-quality="smooth"] .aurora::before,
+        body[data-quality="smooth"] .aurora::after,
+        body[data-quality="smooth"] .dust::before,
+        body[data-quality="smooth"] .dust::after {
+            animation: none;
+        }
+
+        body[data-quality="smooth"] .aurora,
+        body[data-quality="smooth"] .dust {
+            opacity: .4;
+        }
+
+        body[data-quality="smooth"] .quality-toggle {
+            background: rgba(18, 38, 70, .72);
+        }
+
+        @media (max-width: 560px), (hover: none) and (pointer: coarse) {
+            body[data-quality="beauty"] .shooting-star {
+                display: block;
+            }
+
+            body[data-quality="beauty"] .atmosphere::before {
+                animation: nebula-breathe 24s ease-in-out infinite alternate;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="stars-bg" aria-hidden="true"></div>
-  <div class="atmosphere" aria-hidden="true"></div>
-  <div class="moon" aria-hidden="true"></div>
-  <span class="shooting-star s1" aria-hidden="true"></span>
-  <span class="shooting-star s2" aria-hidden="true"></span>
-  <span class="shooting-star s3" aria-hidden="true"></span>
-  <main class="sky" id="sky" aria-label="Небо"></main>
-  <canvas class="fx-canvas" id="fxCanvas" aria-hidden="true"></canvas>
-  <section class="heart-text" id="heartText" aria-label="Сердце-созвездие"></section>
-  <div class="status" id="status">Нажимай на звезды · 0/10</div>
-  <button class="quality-toggle" id="qualityToggle" type="button" aria-label="Переключить качество">Режим: Плавно</button>
-  <div class="orientation-hint" id="orientationHint" aria-live="polite" aria-hidden="true">
+<div class="stars-bg" aria-hidden="true"></div>
+<div class="atmosphere" aria-hidden="true"></div>
+<div class="aurora" aria-hidden="true"></div>
+<div class="dust" aria-hidden="true"></div>
+<div class="moon" aria-hidden="true"></div>
+<span class="shooting-star s1" aria-hidden="true"></span>
+<span class="shooting-star s2" aria-hidden="true"></span>
+<span class="shooting-star s3" aria-hidden="true"></span>
+<main class="sky" id="sky" aria-label="Небо"></main>
+<canvas class="fx-canvas" id="fxCanvas" aria-hidden="true"></canvas>
+<section class="heart-text" id="heartText" aria-label="Сердце-созвездие"></section>
+<div class="status" id="status">Нажимай на звезды · 0/10</div>
+<button class="quality-toggle" id="qualityToggle" type="button" aria-label="Переключить качество">Режим: Плавно</button>
+<div class="orientation-hint" id="orientationHint" aria-live="polite" aria-hidden="true">
     <div class="orientation-card">
-      <span class="orientation-icon" aria-hidden="true"></span>
-      <p class="orientation-title">Переверни телефон</p>
-      <p class="orientation-subtitle">Лучше смотреть это небо горизонтально</p>
+        <span class="orientation-icon" aria-hidden="true"></span>
+        <p class="orientation-title">Переверни телефон</p>
+        <p class="orientation-subtitle">Лучше смотреть это небо горизонтально</p>
     </div>
-  </div>
+</div>
 
-  <script>
+<script>
     const letters = ["Я", "Л", "Ю", "Б", "Л", "Ю", "Т", "Е", "Б", "Я"];
     const HEART_PATH = "M50 82C20 60 5 44 5 25C5 11 16 4 29 4C39 4 47 10 50 19C53 10 61 4 71 4C84 4 95 11 95 25C95 44 80 60 50 82Z";
     const HEART_CONSTELLATION_POINTS = [
-      [50, 80], [34, 67], [19, 50], [12, 30], [29, 11],
-      [50, 20], [71, 11], [88, 30], [81, 50], [66, 67]
+        [50, 80], [34, 67], [19, 50], [12, 30], [29, 11],
+        [50, 20], [71, 11], [88, 30], [81, 50], [66, 67]
     ];
     const positions = [
-      [6, 10], [19, 28], [33, 14], [48, 38], [63, 20],
-      [79, 46], [92, 26], [74, 66], [52, 84], [14, 74]
+        [6, 10], [19, 28], [33, 14], [48, 38], [63, 20],
+        [79, 46], [92, 26], [74, 66], [52, 84], [14, 74]
     ];
 
     const sky = document.getElementById("sky");
@@ -826,800 +1005,821 @@
     let lowPowerMode = false;
 
     function makeStar(letter, i) {
-      const btn = document.createElement("button");
-      btn.className = "star";
-      btn.type = "button";
-      btn.style.left = `${positions[i][0]}%`;
-      btn.style.top = `${positions[i][1]}%`;
-      btn.setAttribute("aria-label", `Звезда ${i + 1}`);
+        const btn = document.createElement("button");
+        btn.className = "star";
+        btn.type = "button";
+        btn.style.left = `${positions[i][0]}%`;
+        btn.style.top = `${positions[i][1]}%`;
+        btn.setAttribute("aria-label", `Звезда ${i + 1}`);
 
-      const shape = document.createElement("span");
-      shape.className = "star-shape";
-      shape.textContent = "✦";
+        const shape = document.createElement("span");
+        shape.className = "star-shape";
+        shape.textContent = "✦";
 
-      const l = document.createElement("span");
-      l.className = "letter";
-      l.textContent = letter;
+        const l = document.createElement("span");
+        l.className = "letter";
+        l.textContent = letter;
 
-      btn.append(shape, l);
-      btn.addEventListener("click", (ev) => {
-        if (btn.classList.contains("revealed")) return;
-        btn.classList.add("revealed");
-        opened += 1;
-        status.textContent = `Нажимай на звезды · ${opened}/${letters.length}`;
+        btn.append(shape, l);
+        btn.addEventListener("click", (ev) => {
+            if (btn.classList.contains("revealed")) return;
+            btn.classList.add("revealed");
+            opened += 1;
+            status.textContent = `Нажимай на звезды · ${opened}/${letters.length}`;
 
-        const rect = sky.getBoundingClientRect();
-        const starRect = btn.getBoundingClientRect();
-        const sx = clampPercent(((starRect.left + starRect.width / 2 - rect.left) / rect.width) * 100);
-        const sy = clampPercent(((starRect.top + starRect.height / 2 - rect.top) / rect.height) * 100);
+            const rect = sky.getBoundingClientRect();
+            const starRect = btn.getBoundingClientRect();
+            const sx = clampPercent(((starRect.left + starRect.width / 2 - rect.left) / rect.width) * 100);
+            const sy = clampPercent(((starRect.top + starRect.height / 2 - rect.top) / rect.height) * 100);
 
-        explode(sx, sy, 28);
+            explode(sx, sy, 28);
 
-        setTimeout(() => {
-          spawnComet(i, sx, sy);
-          btn.classList.add("hidden");
-          setTimeout(() => btn.remove(), 280);
-        }, 520);
+            setTimeout(() => {
+                spawnComet(i, sx, sy);
+                btn.classList.add("hidden");
+                setTimeout(() => btn.remove(), 280);
+            }, 520);
 
-        if (opened === letters.length) {
-          assemblyPending = true;
-          assemblyReadyAt = 0;
-        }
-      });
+            if (opened === letters.length) {
+                assemblyPending = true;
+                assemblyReadyAt = 0;
+            }
+        });
 
-      sky.appendChild(btn);
-      stars.push(btn);
+        sky.appendChild(btn);
+        stars.push(btn);
     }
 
     function spawnComet(index, sx, sy) {
-      const el = document.createElement("span");
-      el.className = "comet";
-      el.style.left = `${sx}%`;
-      el.style.top = `${sy}%`;
-      sky.appendChild(el);
+        const el = document.createElement("span");
+        el.className = "comet";
+        el.style.left = `${sx}%`;
+        el.style.top = `${sy}%`;
+        sky.appendChild(el);
 
-      const theta = (index / letters.length) * Math.PI * 2;
-      const rx = 36 + (index % 3) * 4;
-      const ry = 24 + (index % 2) * 3;
-      const tx = 50 + Math.cos(theta) * rx;
-      const ty = 54 + Math.sin(theta) * ry;
+        const theta = (index / letters.length) * Math.PI * 2;
+        const rx = 36 + (index % 3) * 4;
+        const ry = 24 + (index % 2) * 3;
+        const tx = 50 + Math.cos(theta) * rx;
+        const ty = 54 + Math.sin(theta) * ry;
 
-      const dx = tx - sx;
-      const dy = ty - sy;
-      const d = Math.hypot(dx, dy) || 1;
-      const nx = -dy / d;
-      const ny = dx / d;
-      const arc = (index % 2 === 0 ? 1 : -1) * (8 + (index % 4) * 2.2);
-      const txv = -Math.sin(theta) * rx;
-      const tyv = Math.cos(theta) * ry;
-      const tvd = Math.hypot(txv, tyv) || 1;
-      const tnx = txv / tvd;
-      const tny = tyv / tvd;
-      const tangentLead = 18 + (index % 3) * 2.5;
-
-      const c = {
-        idx: index,
-        el,
-        state: "toOrbit",
-        x: sx,
-        y: sy,
-        prevX: sx,
-        prevY: sy,
-        lastAngle: 0,
-        trail: [],
-        lastTrailMs: 0,
-        t0: performance.now(),
-        dur: 3600 + (index % 3) * 220,
-        sx,
-        sy,
-        c1x: sx + dx * 0.24 + nx * (arc * 1.25),
-        c1y: sy + dy * 0.24 + ny * (arc * 1.25),
-        c2x: tx - tnx * tangentLead - nx * (arc * 0.25),
-        c2y: ty - tny * tangentLead - ny * (arc * 0.25),
-        tx,
-        ty,
-        theta,
-        orbitRx: rx,
-        orbitRy: ry,
-        orbitSpeed: 0.32 + (index % 4) * 0.035,
-        toHeartStart: 0,
-        toHeartDur: 4300,
-        hx1: 0,
-        hy1: 0,
-        hx2: 0,
-        hy2: 0,
-        htx: 0,
-        hty: 0,
-        hindex: -1
-      };
-
-      comets.push(c);
-      if (!orbitHandle) {
-        lastFrame = performance.now();
-        orbitHandle = requestAnimationFrame(tick);
-      }
-    }
-
-    function beginHeartAssembly() {
-      if (assembling) return;
-      assembling = true;
-      finaleComplete = false;
-      lockedHeartLayout = getHeartLayout();
-      arrivedToHeart = 0;
-      revealedConstellationNodes = new Set();
-      heartText.classList.remove("show");
-      constellationTargets = buildConstellationTargets(lockedHeartLayout, comets.length);
-      resetConstellation(constellationTargets);
-      heartText.classList.add("revealing");
-
-      const assigned = assignConstellationTargets(comets, constellationTargets);
-
-      comets.forEach((c, i) => {
-        const target = assigned[i];
-        const dx = target.x - c.x;
-        const dy = target.y - c.y;
+        const dx = tx - sx;
+        const dy = ty - sy;
         const d = Math.hypot(dx, dy) || 1;
         const nx = -dy / d;
         const ny = dx / d;
-        const curve = (i % 2 === 0 ? 1 : -1) * (7 + (i % 3) * 2.1);
-        const vx = c.x - c.prevX;
-        const vy = c.y - c.prevY;
-        const vd = Math.hypot(vx, vy);
-        const ux = vd > 0.001 ? vx / vd : -Math.sin(c.theta || 0);
-        const uy = vd > 0.001 ? vy / vd : Math.cos(c.theta || 0);
-        const departLead = Math.min(30, Math.max(18, d * 0.34));
-        const arriveLead = Math.min(24, Math.max(12, d * 0.28));
+        const arc = (index % 2 === 0 ? 1 : -1) * (8 + (index % 4) * 2.2);
+        const txv = -Math.sin(theta) * rx;
+        const tyv = Math.cos(theta) * ry;
+        const tvd = Math.hypot(txv, tyv) || 1;
+        const tnx = txv / tvd;
+        const tny = tyv / tvd;
+        const tangentLead = 18 + (index % 3) * 2.5;
 
-        c.state = "toHeart";
-        c.toHeartStart = performance.now();
-        c.toHeartDur = 4100 + i * 95;
-        c.sx = c.x;
-        c.sy = c.y;
-        c.hx1 = c.x + ux * departLead + nx * curve * 0.8;
-        c.hy1 = c.y + uy * departLead + ny * curve * 0.8;
-        c.hx2 = target.x - (dx / d) * arriveLead - nx * curve * 0.55;
-        c.hy2 = target.y - (dy / d) * arriveLead - ny * curve * 0.55;
-        c.htx = target.x;
-        c.hty = target.y;
-        c.hindex = target.index;
-      });
+        const c = {
+            idx: index,
+            el,
+            state: "toOrbit",
+            x: sx,
+            y: sy,
+            prevX: sx,
+            prevY: sy,
+            lastAngle: 0,
+            trail: [],
+            lastTrailMs: 0,
+            t0: performance.now(),
+            dur: 3600 + (index % 3) * 220,
+            sx,
+            sy,
+            c1x: sx + dx * 0.24 + nx * (arc * 1.25),
+            c1y: sy + dy * 0.24 + ny * (arc * 1.25),
+            c2x: tx - tnx * tangentLead - nx * (arc * 0.25),
+            c2y: ty - tny * tangentLead - ny * (arc * 0.25),
+            tx,
+            ty,
+            theta,
+            orbitRx: rx,
+            orbitRy: ry,
+            orbitSpeed: 0.32 + (index % 4) * 0.035,
+            toHeartStart: 0,
+            toHeartDur: 4300,
+            hx1: 0,
+            hy1: 0,
+            hx2: 0,
+            hy2: 0,
+            htx: 0,
+            hty: 0,
+            hindex: -1
+        };
+
+        comets.push(c);
+        if (!orbitHandle) {
+            lastFrame = performance.now();
+            orbitHandle = requestAnimationFrame(tick);
+        }
+    }
+
+    function beginHeartAssembly() {
+        if (assembling) return;
+        assembling = true;
+        finaleComplete = false;
+        lockedHeartLayout = getHeartLayout();
+        arrivedToHeart = 0;
+        revealedConstellationNodes = new Set();
+        heartText.classList.remove("show");
+        constellationTargets = buildConstellationTargets(lockedHeartLayout, comets.length);
+        resetConstellation(constellationTargets);
+        heartText.classList.add("revealing");
+
+        const assigned = assignConstellationTargets(comets, constellationTargets);
+
+        comets.forEach((c, i) => {
+            const target = assigned[i];
+            const dx = target.x - c.x;
+            const dy = target.y - c.y;
+            const d = Math.hypot(dx, dy) || 1;
+            const nx = -dy / d;
+            const ny = dx / d;
+            const curve = (i % 2 === 0 ? 1 : -1) * (7 + (i % 3) * 2.1);
+            const vx = c.x - c.prevX;
+            const vy = c.y - c.prevY;
+            const vd = Math.hypot(vx, vy);
+            const ux = vd > 0.001 ? vx / vd : -Math.sin(c.theta || 0);
+            const uy = vd > 0.001 ? vy / vd : Math.cos(c.theta || 0);
+            const departLead = Math.min(30, Math.max(18, d * 0.34));
+            const arriveLead = Math.min(24, Math.max(12, d * 0.28));
+
+            c.state = "toHeart";
+            c.toHeartStart = performance.now();
+            c.toHeartDur = 4100 + i * 95;
+            c.sx = c.x;
+            c.sy = c.y;
+            c.hx1 = c.x + ux * departLead + nx * curve * 0.8;
+            c.hy1 = c.y + uy * departLead + ny * curve * 0.8;
+            c.hx2 = target.x - (dx / d) * arriveLead - nx * curve * 0.55;
+            c.hy2 = target.y - (dy / d) * arriveLead - ny * curve * 0.55;
+            c.htx = target.x;
+            c.hty = target.y;
+            c.hindex = target.index;
+        });
     }
 
     function tick(now) {
-      const dt = Math.min(0.05, (now - lastFrame) / 1000);
-      const lowPower = lowPowerMode;
-      const trailInterval = lowPower ? 150 : 56;
-      const maxTrail = lowPower ? 5 : 14;
-      lastFrame = now;
-      let alive = 0;
+        const dt = Math.min(0.05, (now - lastFrame) / 1000);
+        const lowPower = lowPowerMode;
+        const trailInterval = lowPower ? 150 : 56;
+        const maxTrail = lowPower ? 5 : 14;
+        lastFrame = now;
+        let alive = 0;
 
-      comets.forEach((c) => {
-        if (c.state === "done") return;
-        alive += 1;
+        comets.forEach((c) => {
+            if (c.state === "done") return;
+            alive += 1;
 
-        if (c.state === "toOrbit") {
-          const t = Math.min(1, (now - c.t0) / c.dur);
-          const e = flowEase(t);
-          const u = 1 - e;
-          c.x = u*u*u*c.sx + 3*u*u*e*c.c1x + 3*u*e*e*c.c2x + e*e*e*c.tx;
-          c.y = u*u*u*c.sy + 3*u*u*e*c.c1y + 3*u*e*e*c.c2y + e*e*e*c.ty;
-          if (t >= 1) {
-            c.state = "orbit";
-            c.theta = Math.atan2((c.y - 54) / (c.orbitRy || 1), (c.x - 50) / (c.orbitRx || 1));
-          }
-        } else if (c.state === "orbit") {
-          c.theta += c.orbitSpeed * dt;
-          c.x = 50 + Math.cos(c.theta) * c.orbitRx;
-          c.y = 54 + Math.sin(c.theta) * c.orbitRy;
-        } else if (c.state === "toHeart") {
-          const t = Math.min(1, (now - c.toHeartStart) / c.toHeartDur);
-          const e = flowEase(t);
-          const u = 1 - e;
-          c.x = u*u*u*c.sx + 3*u*u*e*c.hx1 + 3*u*e*e*c.hx2 + e*e*e*c.htx;
-          c.y = u*u*u*c.sy + 3*u*u*e*c.hy1 + 3*u*e*e*c.hy2 + e*e*e*c.hty;
-          if (t >= 1) {
-            c.state = "done";
-            c.el.remove();
-            const ex = c.x;
-            const ey = c.y;
-            finaleSpark(ex, ey, c.hindex);
-            arrivedToHeart += 1;
-            if (arrivedToHeart === comets.length) {
-              finishFinaleSmoothly();
+            if (c.state === "toOrbit") {
+                const t = Math.min(1, (now - c.t0) / c.dur);
+                const e = flowEase(t);
+                const u = 1 - e;
+                c.x = u*u*u*c.sx + 3*u*u*e*c.c1x + 3*u*e*e*c.c2x + e*e*e*c.tx;
+                c.y = u*u*u*c.sy + 3*u*u*e*c.c1y + 3*u*e*e*c.c2y + e*e*e*c.ty;
+                if (t >= 1) {
+                    c.state = "orbit";
+                    c.theta = Math.atan2((c.y - 54) / (c.orbitRy || 1), (c.x - 50) / (c.orbitRx || 1));
+                }
+            } else if (c.state === "orbit") {
+                c.theta += c.orbitSpeed * dt;
+                c.x = 50 + Math.cos(c.theta) * c.orbitRx;
+                c.y = 54 + Math.sin(c.theta) * c.orbitRy;
+            } else if (c.state === "toHeart") {
+                const t = Math.min(1, (now - c.toHeartStart) / c.toHeartDur);
+                const e = flowEase(t);
+                const u = 1 - e;
+                c.x = u*u*u*c.sx + 3*u*u*e*c.hx1 + 3*u*e*e*c.hx2 + e*e*e*c.htx;
+                c.y = u*u*u*c.sy + 3*u*u*e*c.hy1 + 3*u*e*e*c.hy2 + e*e*e*c.hty;
+                if (t >= 1) {
+                    c.state = "done";
+                    c.el.remove();
+                    const ex = c.x;
+                    const ey = c.y;
+                    finaleSpark(ex, ey, c.hindex);
+                    arrivedToHeart += 1;
+                    if (arrivedToHeart === comets.length) {
+                        finishFinaleSmoothly();
+                    }
+                }
             }
-          }
+
+            const vx = c.x - c.prevX;
+            const vy = c.y - c.prevY;
+            const speed = Math.hypot(vx, vy);
+            const angRaw = Math.atan2(vy, vx) * 180 / Math.PI;
+            const dAng = ((((angRaw - c.lastAngle) + 540) % 360) - 180);
+            const ang = c.lastAngle + dAng * 0.25;
+            c.lastAngle = ang;
+
+            c.el.style.left = `${c.x}%`;
+            c.el.style.top = `${c.y}%`;
+            c.el.style.transform = `translate(-50%, -50%) rotate(${ang.toFixed(1)}deg)`;
+
+            const shouldRenderTrail = !lowPower || c.state !== "orbit";
+            if (shouldRenderTrail && speed > 0.004 && (now - c.lastTrailMs) > trailInterval) {
+                c.trail.push({ x: c.x, y: c.y });
+                if (c.trail.length > maxTrail) c.trail.shift();
+                renderTrail(c.trail, lowPower);
+                c.lastTrailMs = now;
+            }
+
+            c.prevX = c.x;
+            c.prevY = c.y;
+        });
+
+        if (assemblyPending && !assembling && comets.length === letters.length) {
+            const allOrbit = comets.every((c) => c.state === "orbit");
+            if (allOrbit) {
+                if (!assemblyReadyAt) assemblyReadyAt = now + 1250;
+                if (now >= assemblyReadyAt) {
+                    assemblyPending = false;
+                    assemblyReadyAt = 0;
+                    beginHeartAssembly();
+                }
+            } else {
+                assemblyReadyAt = 0;
+            }
         }
 
-        const vx = c.x - c.prevX;
-        const vy = c.y - c.prevY;
-        const speed = Math.hypot(vx, vy);
-        const angRaw = Math.atan2(vy, vx) * 180 / Math.PI;
-        const dAng = ((((angRaw - c.lastAngle) + 540) % 360) - 180);
-        const ang = c.lastAngle + dAng * 0.25;
-        c.lastAngle = ang;
-
-        c.el.style.left = `${c.x}%`;
-        c.el.style.top = `${c.y}%`;
-        c.el.style.transform = `translate(-50%, -50%) rotate(${ang.toFixed(1)}deg)`;
-
-        const shouldRenderTrail = !lowPower || c.state !== "orbit";
-        if (shouldRenderTrail && speed > 0.004 && (now - c.lastTrailMs) > trailInterval) {
-          c.trail.push({ x: c.x, y: c.y });
-          if (c.trail.length > maxTrail) c.trail.shift();
-          renderTrail(c.trail, lowPower);
-          c.lastTrailMs = now;
-        }
-
-        c.prevX = c.x;
-        c.prevY = c.y;
-      });
-
-      if (assemblyPending && !assembling && comets.length === letters.length) {
-        const allOrbit = comets.every((c) => c.state === "orbit");
-        if (allOrbit) {
-          if (!assemblyReadyAt) assemblyReadyAt = now + 1250;
-          if (now >= assemblyReadyAt) {
-            assemblyPending = false;
-            assemblyReadyAt = 0;
-            beginHeartAssembly();
-          }
-        } else {
-          assemblyReadyAt = 0;
-        }
-      }
-
-      if (alive > 0) orbitHandle = requestAnimationFrame(tick);
-      else orbitHandle = null;
+        if (alive > 0) orbitHandle = requestAnimationFrame(tick);
+        else orbitHandle = null;
     }
 
     function smoother(t) {
-      return t*t*t*(t*(6*t - 15) + 10);
+        return t*t*t*(t*(6*t - 15) + 10);
     }
 
     function flowEase(t) {
-      return Math.min(1, Math.max(0, 0.72 * t + 0.28 * smoother(t)));
+        return Math.min(1, Math.max(0, 0.72 * t + 0.28 * smoother(t)));
     }
 
     function clampPercent(value) {
-      return Math.min(100, Math.max(0, value));
+        return Math.min(100, Math.max(0, value));
     }
 
     function initQualityMode() {
-      let saved = "";
-      try {
-        saved = localStorage.getItem("loveQuality") || "";
-      } catch (_) {
-        saved = "";
-      }
-      const coarsePointer = coarsePointerQuery ? coarsePointerQuery.matches : false;
-      qualityMode = saved || (coarsePointer ? "smooth" : "beauty");
-      applyQualityMode();
+        let saved = "";
+        try {
+            saved = localStorage.getItem("loveQuality") || "";
+        } catch (_) {
+            saved = "";
+        }
+        const coarsePointer = coarsePointerQuery ? coarsePointerQuery.matches : false;
+        qualityMode = saved || (coarsePointer ? "smooth" : "beauty");
+        applyQualityMode();
     }
 
     function applyQualityMode() {
-      document.body.dataset.quality = qualityMode;
-      qualityToggle.textContent = `Режим: ${qualityMode === "smooth" ? "Плавно" : "Красиво"}`;
-      qualityToggle.setAttribute("aria-pressed", qualityMode === "smooth" ? "true" : "false");
-      updateLowPowerMode();
-      resizeFxCanvas();
+        document.body.dataset.quality = qualityMode;
+        qualityToggle.textContent = `Режим: ${qualityMode === "smooth" ? "Плавно" : "Красиво"}`;
+        qualityToggle.setAttribute("aria-pressed", qualityMode === "smooth" ? "true" : "false");
+        updateLowPowerMode();
+        resizeFxCanvas();
     }
 
     qualityToggle.addEventListener("click", () => {
-      qualityMode = qualityMode === "smooth" ? "beauty" : "smooth";
-      try {
-        localStorage.setItem("loveQuality", qualityMode);
-      } catch (_) {}
-      applyQualityMode();
+        qualityMode = qualityMode === "smooth" ? "beauty" : "smooth";
+        try {
+            localStorage.setItem("loveQuality", qualityMode);
+        } catch (_) {}
+        applyQualityMode();
     });
 
     function updateLowPowerMode() {
-      lowPowerMode = qualityMode === "smooth";
-      return lowPowerMode;
+        lowPowerMode = qualityMode === "smooth";
+        return lowPowerMode;
     }
 
     function updateOrientationHint() {
-      const width = window.innerWidth || document.documentElement.clientWidth || 0;
-      const height = window.innerHeight || document.documentElement.clientHeight || 0;
-      const coarsePointer = coarsePointerQuery ? coarsePointerQuery.matches : false;
-      const compactScreen = Math.min(width, height) <= 560 && Math.max(width, height) <= 960;
-      const isPhone = coarsePointer && compactScreen;
-      const needsRotation = isPhone && height > width;
+        const width = window.innerWidth || document.documentElement.clientWidth || 0;
+        const height = window.innerHeight || document.documentElement.clientHeight || 0;
+        const coarsePointer = coarsePointerQuery ? coarsePointerQuery.matches : false;
+        const compactScreen = Math.min(width, height) <= 560 && Math.max(width, height) <= 960;
+        const isPhone = coarsePointer && compactScreen;
+        const needsRotation = isPhone && height > width;
 
-      document.body.classList.toggle("needs-rotation", needsRotation);
-      orientationHint.setAttribute("aria-hidden", needsRotation ? "false" : "true");
+        document.body.classList.toggle("needs-rotation", needsRotation);
+        orientationHint.setAttribute("aria-hidden", needsRotation ? "false" : "true");
     }
 
     function resizeFxCanvas() {
-      const vw = window.innerWidth || document.documentElement.clientWidth || 320;
-      const vh = window.innerHeight || document.documentElement.clientHeight || 640;
-      fxOffsetX = vw * 0.12;
-      fxOffsetY = vh * 0.12;
-      fxW = vw + fxOffsetX * 2;
-      fxH = vh + fxOffsetY * 2;
-      fxDpr = Math.min(window.devicePixelRatio || 1, lowPowerMode ? 1.25 : 1.65);
-      fxCanvas.width = Math.ceil(fxW * fxDpr);
-      fxCanvas.height = Math.ceil(fxH * fxDpr);
-      fxCanvas.style.left = `${-fxOffsetX}px`;
-      fxCanvas.style.top = `${-fxOffsetY}px`;
-      fxCanvas.style.width = `${fxW}px`;
-      fxCanvas.style.height = `${fxH}px`;
-      fxCtx.setTransform(fxDpr, 0, 0, fxDpr, 0, 0);
+        const vw = window.innerWidth || document.documentElement.clientWidth || 320;
+        const vh = window.innerHeight || document.documentElement.clientHeight || 640;
+        fxOffsetX = vw * 0.12;
+        fxOffsetY = vh * 0.12;
+        fxW = vw + fxOffsetX * 2;
+        fxH = vh + fxOffsetY * 2;
+        fxDpr = Math.min(window.devicePixelRatio || 1, lowPowerMode ? 1.25 : 1.65);
+        fxCanvas.width = Math.ceil(fxW * fxDpr);
+        fxCanvas.height = Math.ceil(fxH * fxDpr);
+        fxCanvas.style.left = `${-fxOffsetX}px`;
+        fxCanvas.style.top = `${-fxOffsetY}px`;
+        fxCanvas.style.width = `${fxW}px`;
+        fxCanvas.style.height = `${fxH}px`;
+        fxCtx.setTransform(fxDpr, 0, 0, fxDpr, 0, 0);
     }
 
     function percentToCanvas(x, y) {
-      const vw = window.innerWidth || document.documentElement.clientWidth || 320;
-      const vh = window.innerHeight || document.documentElement.clientHeight || 640;
-      return { x: fxOffsetX + x * vw / 100, y: fxOffsetY + y * vh / 100 };
+        const vw = window.innerWidth || document.documentElement.clientWidth || 320;
+        const vh = window.innerHeight || document.documentElement.clientHeight || 640;
+        return { x: fxOffsetX + x * vw / 100, y: fxOffsetY + y * vh / 100 };
     }
 
     function ensureFxLoop() {
-      if (!fxHandle) {
-        fxLastFrame = performance.now();
-        fxHandle = requestAnimationFrame(tickFx);
-      }
+        if (!fxHandle) {
+            fxLastFrame = performance.now();
+            fxHandle = requestAnimationFrame(tickFx);
+        }
     }
 
     function addFxParticle(particle) {
-      fxParticles.push(particle);
-      const maxParticles = lowPowerMode ? 120 : 300;
-      if (fxParticles.length > maxParticles) {
-        fxParticles.splice(0, fxParticles.length - maxParticles);
-      }
-      ensureFxLoop();
+        fxParticles.push(particle);
+        const maxParticles = lowPowerMode ? 120 : 300;
+        if (fxParticles.length > maxParticles) {
+            fxParticles.splice(0, fxParticles.length - maxParticles);
+        }
+        ensureFxLoop();
     }
 
     function addFxStreak(streak) {
-      fxStreaks.push(streak);
-      const maxStreaks = lowPowerMode ? 18 : 34;
-      if (fxStreaks.length > maxStreaks) {
-        fxStreaks.splice(0, fxStreaks.length - maxStreaks);
-      }
-      ensureFxLoop();
+        fxStreaks.push(streak);
+        const maxStreaks = lowPowerMode ? 18 : 34;
+        if (fxStreaks.length > maxStreaks) {
+            fxStreaks.splice(0, fxStreaks.length - maxStreaks);
+        }
+        ensureFxLoop();
     }
 
     function tickFx(now) {
-      const dt = Math.min(0.04, (now - fxLastFrame) / 1000);
-      fxLastFrame = now;
-      fxCtx.setTransform(fxDpr, 0, 0, fxDpr, 0, 0);
-      fxCtx.clearRect(-4, -4, fxW + 8, fxH + 8);
+        const dt = Math.min(0.04, (now - fxLastFrame) / 1000);
+        fxLastFrame = now;
+        fxCtx.setTransform(fxDpr, 0, 0, fxDpr, 0, 0);
+        fxCtx.clearRect(-4, -4, fxW + 8, fxH + 8);
 
-      for (let i = fxStreaks.length - 1; i >= 0; i--) {
-        const s = fxStreaks[i];
-        s.age += dt;
-        if (s.age >= s.life) {
-          fxStreaks.splice(i, 1);
-          continue;
+        for (let i = fxStreaks.length - 1; i >= 0; i--) {
+            const s = fxStreaks[i];
+            s.age += dt;
+            if (s.age >= s.life) {
+                fxStreaks.splice(i, 1);
+                continue;
+            }
+
+            const k = s.age / s.life;
+            const alpha = (s.alpha || 1) * Math.pow(1 - k, 1.25);
+            drawTrailPath(s.points, s.width * (1 - k * 0.42), alpha, s);
         }
 
-        const k = s.age / s.life;
-        const alpha = (s.alpha || 1) * Math.pow(1 - k, 1.25);
-        drawTrailPath(s.points, s.width * (1 - k * 0.42), alpha, s);
-      }
+        for (let i = fxParticles.length - 1; i >= 0; i--) {
+            const p = fxParticles[i];
+            p.age += dt;
+            if (p.age >= p.life) {
+                fxParticles.splice(i, 1);
+                continue;
+            }
 
-      for (let i = fxParticles.length - 1; i >= 0; i--) {
-        const p = fxParticles[i];
-        p.age += dt;
-        if (p.age >= p.life) {
-          fxParticles.splice(i, 1);
-          continue;
+            p.x += (p.vx || 0) * dt;
+            p.y += (p.vy || 0) * dt;
+            p.vx *= p.drag || 1;
+            p.vy *= p.drag || 1;
+
+            const k = p.age / p.life;
+            const alpha = (p.alpha || 1) * (1 - k);
+            const size = p.kind === "ring"
+                ? p.size + k * (p.radiusGrow || 0)
+                : p.size * (p.grow ? 1 + k * p.grow : 1);
+
+            fxCtx.shadowBlur = 0;
+
+            if (p.kind === "ring") {
+                fxCtx.globalAlpha = alpha * .62;
+                fxCtx.strokeStyle = p.color;
+                fxCtx.lineWidth = Math.max(0.55, (p.lineWidth || 1.2) * (1 - k * 0.75));
+                fxCtx.beginPath();
+                fxCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
+                fxCtx.stroke();
+            } else {
+                drawSoftDot(p.x, p.y, size, p.color, alpha);
+            }
         }
 
-        p.x += (p.vx || 0) * dt;
-        p.y += (p.vy || 0) * dt;
-        p.vx *= p.drag || 1;
-        p.vy *= p.drag || 1;
-
-        const k = p.age / p.life;
-        const alpha = (p.alpha || 1) * (1 - k);
-        const size = p.kind === "ring"
-          ? p.size + k * (p.radiusGrow || 0)
-          : p.size * (p.grow ? 1 + k * p.grow : 1);
-
+        fxCtx.globalAlpha = 1;
         fxCtx.shadowBlur = 0;
+        fxCtx.shadowColor = "transparent";
+        fxCtx.lineWidth = 1;
 
-        if (p.kind === "ring") {
-          fxCtx.globalAlpha = alpha * .62;
-          fxCtx.strokeStyle = p.color;
-          fxCtx.lineWidth = Math.max(0.55, (p.lineWidth || 1.2) * (1 - k * 0.75));
-          fxCtx.beginPath();
-          fxCtx.arc(p.x, p.y, size, 0, Math.PI * 2);
-          fxCtx.stroke();
-        } else {
-          drawSoftDot(p.x, p.y, size, p.color, alpha);
-        }
-      }
-
-      fxCtx.globalAlpha = 1;
-      fxCtx.shadowBlur = 0;
-      fxCtx.shadowColor = "transparent";
-      fxCtx.lineWidth = 1;
-
-      if (fxParticles.length || fxStreaks.length) fxHandle = requestAnimationFrame(tickFx);
-      else fxHandle = null;
+        if (fxParticles.length || fxStreaks.length) fxHandle = requestAnimationFrame(tickFx);
+        else fxHandle = null;
     }
 
     function drawSoftDot(x, y, size, color, alpha) {
-      const radius = Math.max(1, size);
-      const g = fxCtx.createRadialGradient(x, y, 0, x, y, radius);
-      g.addColorStop(0, color);
-      g.addColorStop(0.52, color);
-      g.addColorStop(1, "rgba(255,255,255,0)");
-      fxCtx.globalAlpha = alpha;
-      fxCtx.fillStyle = g;
-      fxCtx.beginPath();
-      fxCtx.arc(x, y, radius, 0, Math.PI * 2);
-      fxCtx.fill();
+        const radius = Math.max(1, size);
+        const g = fxCtx.createRadialGradient(x, y, 0, x, y, radius);
+        g.addColorStop(0, color);
+        g.addColorStop(0.52, color);
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        fxCtx.globalAlpha = alpha;
+        fxCtx.fillStyle = g;
+        fxCtx.beginPath();
+        fxCtx.arc(x, y, radius, 0, Math.PI * 2);
+        fxCtx.fill();
     }
 
     function drawTrailPath(points, width, alpha, streak) {
-      if (!points || points.length < 2) return;
+        if (!points || points.length < 2) return;
 
-      fxCtx.lineCap = "round";
-      fxCtx.lineJoin = "round";
-      fxCtx.shadowBlur = 0;
+        fxCtx.lineCap = "round";
+        fxCtx.lineJoin = "round";
+        fxCtx.shadowBlur = 0;
 
-      fxCtx.globalAlpha = alpha * 0.5;
-      fxCtx.strokeStyle = streak.outerColor || "rgba(142,184,237,.45)";
-      fxCtx.lineWidth = width;
-      strokeSmoothPath(points);
+        fxCtx.globalAlpha = alpha * 0.5;
+        fxCtx.strokeStyle = streak.outerColor || "rgba(142,184,237,.45)";
+        fxCtx.lineWidth = width;
+        strokeSmoothPath(points);
 
-      fxCtx.globalAlpha = alpha;
-      fxCtx.strokeStyle = streak.color || "rgba(228,240,255,.82)";
-      fxCtx.lineWidth = Math.max(2, width * 0.42);
-      strokeSmoothPath(points);
+        fxCtx.globalAlpha = alpha;
+        fxCtx.strokeStyle = streak.color || "rgba(228,240,255,.82)";
+        fxCtx.lineWidth = Math.max(2, width * 0.42);
+        strokeSmoothPath(points);
     }
 
     function strokeSmoothPath(points) {
-      fxCtx.beginPath();
-      fxCtx.moveTo(points[0].x, points[0].y);
+        fxCtx.beginPath();
+        fxCtx.moveTo(points[0].x, points[0].y);
 
-      for (let i = 1; i < points.length - 1; i++) {
-        const midX = (points[i].x + points[i + 1].x) / 2;
-        const midY = (points[i].y + points[i + 1].y) / 2;
-        fxCtx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
-      }
+        for (let i = 1; i < points.length - 1; i++) {
+            const midX = (points[i].x + points[i + 1].x) / 2;
+            const midY = (points[i].y + points[i + 1].y) / 2;
+            fxCtx.quadraticCurveTo(points[i].x, points[i].y, midX, midY);
+        }
 
-      const last = points[points.length - 1];
-      fxCtx.lineTo(last.x, last.y);
-      fxCtx.stroke();
+        const last = points[points.length - 1];
+        fxCtx.lineTo(last.x, last.y);
+        fxCtx.stroke();
     }
 
     function renderTrail(trail, lowPower) {
-      const n = trail.length;
-      if (n < 2) return;
+        const n = trail.length;
+        if (n < 2) return;
 
-      const points = trail.slice(lowPower ? -5 : -10).map((p) => percentToCanvas(p.x, p.y));
-      const head = points[points.length - 1];
+        const points = trail.slice(lowPower ? -5 : -10).map((p) => percentToCanvas(p.x, p.y));
+        const head = points[points.length - 1];
 
-      addFxStreak({
-        points,
-        age: 0,
-        life: lowPower ? 0.36 : 0.5,
-        width: lowPower ? 17 : 23,
-        alpha: lowPower ? 0.24 : 0.34,
-        color: lowPower ? "rgba(222,238,255,.72)" : "rgba(231,243,255,.86)",
-        outerColor: lowPower ? "rgba(112,158,220,.28)" : "rgba(116,166,232,.38)",
-        glowColor: "rgba(185,220,255,.78)",
-        glow: lowPower ? 0 : 14
-      });
+        addFxStreak({
+            points,
+            age: 0,
+            life: lowPower ? 0.36 : 0.5,
+            width: lowPower ? 17 : 23,
+            alpha: lowPower ? 0.24 : 0.34,
+            color: lowPower ? "rgba(222,238,255,.72)" : "rgba(231,243,255,.86)",
+            outerColor: lowPower ? "rgba(112,158,220,.28)" : "rgba(116,166,232,.38)",
+            glowColor: "rgba(185,220,255,.78)",
+            glow: lowPower ? 0 : 14
+        });
 
-      addFxParticle({
-        x: head.x,
-        y: head.y,
-        vx: 0,
-        vy: 0,
-        age: 0,
-        life: lowPower ? 0.22 : 0.28,
-        size: lowPower ? 7 : 9,
-        grow: 0.2,
-        alpha: lowPower ? 0.18 : 0.28,
-        color: lowPower ? "rgba(205,226,255,.55)" : "rgba(230,242,255,.68)",
-        glow: lowPower ? 0 : 8,
-        drag: 1
-      });
+        addFxParticle({
+            x: head.x,
+            y: head.y,
+            vx: 0,
+            vy: 0,
+            age: 0,
+            life: lowPower ? 0.22 : 0.28,
+            size: lowPower ? 7 : 9,
+            grow: 0.2,
+            alpha: lowPower ? 0.18 : 0.28,
+            color: lowPower ? "rgba(205,226,255,.55)" : "rgba(230,242,255,.68)",
+            glow: lowPower ? 0 : 8,
+            drag: 1
+        });
     }
 
     function explode(x, y, count) {
-      const lowPower = lowPowerMode;
-      const finaleBurst = count > 30;
-      const particleCount = lowPower
-        ? Math.min(count, finaleBurst ? 8 : 7)
-        : Math.min(count, finaleBurst ? 14 : 16);
-      const particleLife = finaleBurst ? (lowPower ? 0.62 : 0.78) : (lowPower ? 0.52 : 0.68);
-      const minSpeed = finaleBurst ? (lowPower ? 34 : 44) : (lowPower ? 24 : 32);
-      const speedSpread = finaleBurst ? (lowPower ? 86 : 112) : (lowPower ? 58 : 82);
-      const center = percentToCanvas(x, y);
+        const lowPower = lowPowerMode;
+        const finaleBurst = count > 30;
+        const particleCount = lowPower
+            ? Math.min(count, finaleBurst ? 8 : 7)
+            : Math.min(count, finaleBurst ? 14 : 16);
+        const particleLife = finaleBurst ? (lowPower ? 0.62 : 0.78) : (lowPower ? 0.52 : 0.68);
+        const minSpeed = finaleBurst ? (lowPower ? 34 : 44) : (lowPower ? 24 : 32);
+        const speedSpread = finaleBurst ? (lowPower ? 86 : 112) : (lowPower ? 58 : 82);
+        const center = percentToCanvas(x, y);
 
-      // Тонкое круглое расширение без blur/shadow — так не появляется видимый квадратный край текстуры.
-      addFxParticle({
-        kind: "ring",
-        x: center.x,
-        y: center.y,
-        vx: 0,
-        vy: 0,
-        age: 0,
-        life: finaleBurst ? 0.56 : 0.5,
-        size: lowPower ? 3 : 4,
-        radiusGrow: finaleBurst ? (lowPower ? 44 : 58) : (lowPower ? 30 : 42),
-        lineWidth: lowPower ? .75 : .95,
-        alpha: finaleBurst ? .2 : .28,
-        color: "rgba(230,242,255,.38)",
-        glow: 0,
-        drag: 1
-      });
-
-      for (let i = 0; i < particleCount; i++) {
-        const a = Math.random() * Math.PI * 2;
-        const uneven = 0.72 + Math.random() * 0.56;
-        const speed = (minSpeed + Math.random() * speedSpread) * uneven;
-        const sideDrift = (Math.random() - 0.5) * 16;
+        // Тонкое круглое расширение без blur/shadow — так не появляется видимый квадратный край текстуры.
         addFxParticle({
-          x: center.x + Math.cos(a) * (Math.random() * 2.5),
-          y: center.y + Math.sin(a) * (Math.random() * 2.5),
-          vx: Math.cos(a) * speed - Math.sin(a) * sideDrift,
-          vy: Math.sin(a) * speed + Math.cos(a) * sideDrift,
-          age: 0,
-          life: particleLife * (0.82 + Math.random() * 0.28),
-          size: lowPower ? 2.6 + Math.random() * 2.3 : 3.2 + Math.random() * 3.1,
-          grow: 0,
-          alpha: finaleBurst ? (lowPower ? 0.34 : 0.44) : (lowPower ? 0.46 : 0.55),
-          color: Math.random() > 0.44 ? "rgba(242,248,255,.86)" : "rgba(255,205,225,.68)",
-          glow: 0,
-          drag: 0.986
+            kind: "ring",
+            x: center.x,
+            y: center.y,
+            vx: 0,
+            vy: 0,
+            age: 0,
+            life: finaleBurst ? 0.56 : 0.5,
+            size: lowPower ? 3 : 4,
+            radiusGrow: finaleBurst ? (lowPower ? 44 : 58) : (lowPower ? 30 : 42),
+            lineWidth: lowPower ? .75 : .95,
+            alpha: finaleBurst ? .2 : .28,
+            color: "rgba(230,242,255,.38)",
+            glow: 0,
+            drag: 1
         });
-      }
+
+        for (let i = 0; i < particleCount; i++) {
+            const a = Math.random() * Math.PI * 2;
+            const uneven = 0.72 + Math.random() * 0.56;
+            const speed = (minSpeed + Math.random() * speedSpread) * uneven;
+            const sideDrift = (Math.random() - 0.5) * 16;
+            addFxParticle({
+                x: center.x + Math.cos(a) * (Math.random() * 2.5),
+                y: center.y + Math.sin(a) * (Math.random() * 2.5),
+                vx: Math.cos(a) * speed - Math.sin(a) * sideDrift,
+                vy: Math.sin(a) * speed + Math.cos(a) * sideDrift,
+                age: 0,
+                life: particleLife * (0.82 + Math.random() * 0.28),
+                size: lowPower ? 2.6 + Math.random() * 2.3 : 3.2 + Math.random() * 3.1,
+                grow: 0,
+                alpha: finaleBurst ? (lowPower ? 0.34 : 0.44) : (lowPower ? 0.46 : 0.55),
+                color: Math.random() > 0.44 ? "rgba(242,248,255,.86)" : "rgba(255,205,225,.68)",
+                glow: 0,
+                drag: 0.986
+            });
+        }
     }
 
     function resetConstellation(targets) {
-      const svgNS = "http://www.w3.org/2000/svg";
-      heartText.innerHTML = "";
-      constellationNodes = [];
-      constellationLines = [];
+        const svgNS = "http://www.w3.org/2000/svg";
+        heartText.innerHTML = "";
+        constellationNodes = [];
+        constellationLines = [];
 
-      constellationLayer = document.createElement("div");
-      constellationLayer.className = "heart-constellation";
-      applyConstellationLayout(lockedHeartLayout || getHeartLayout());
+        constellationLayer = document.createElement("div");
+        constellationLayer.className = "heart-constellation";
+        applyConstellationLayout(lockedHeartLayout || getHeartLayout());
 
-      constellationSvg = document.createElementNS(svgNS, "svg");
-      constellationSvg.classList.add("constellation-svg");
-      constellationSvg.setAttribute("viewBox", "0 0 100 90");
-      constellationSvg.setAttribute("preserveAspectRatio", "none");
-      constellationSvg.setAttribute("aria-hidden", "true");
-      constellationSvg.setAttribute("focusable", "false");
+        constellationSvg = document.createElementNS(svgNS, "svg");
+        constellationSvg.classList.add("constellation-svg");
+        constellationSvg.setAttribute("viewBox", "0 0 100 90");
+        constellationSvg.setAttribute("preserveAspectRatio", "none");
+        constellationSvg.setAttribute("aria-hidden", "true");
+        constellationSvg.setAttribute("focusable", "false");
 
-      const curve = document.createElementNS(svgNS, "path");
-      curve.classList.add("constellation-curve");
-      curve.setAttribute("d", HEART_PATH);
-      curve.setAttribute("pathLength", "1");
-      constellationSvg.appendChild(curve);
+        const curve = document.createElementNS(svgNS, "path");
+        curve.classList.add("constellation-curve");
+        curve.setAttribute("d", HEART_PATH);
+        curve.setAttribute("pathLength", "1");
+        constellationSvg.appendChild(curve);
 
-      const softCurve = document.createElementNS(svgNS, "path");
-      softCurve.classList.add("constellation-curve", "soft");
-      softCurve.setAttribute("d", HEART_PATH);
-      softCurve.setAttribute("pathLength", "1");
-      constellationSvg.appendChild(softCurve);
+        const softCurve = document.createElementNS(svgNS, "path");
+        softCurve.classList.add("constellation-curve", "soft");
+        softCurve.setAttribute("d", HEART_PATH);
+        softCurve.setAttribute("pathLength", "1");
+        constellationSvg.appendChild(softCurve);
 
-      targets.forEach((target, index) => {
-        const next = targets[(index + 1) % targets.length];
-        const line = document.createElementNS(svgNS, "line");
-        line.classList.add("constellation-line");
-        if (index % 2 === 1 || index === 0 || index === 5) line.classList.add("accent");
-        line.setAttribute("x1", target.lx);
-        line.setAttribute("y1", target.ly);
-        line.setAttribute("x2", next.lx);
-        line.setAttribute("y2", next.ly);
-        line.setAttribute("pathLength", "1");
-        line.dataset.from = index;
-        line.dataset.to = (index + 1) % targets.length;
-        line.style.setProperty("--line-delay", `${index * 38}ms`);
-        constellationSvg.appendChild(line);
-        constellationLines[index] = line;
-      });
+        targets.forEach((target, index) => {
+            const line = document.createElementNS(svgNS, "path");
+            line.classList.add("constellation-line");
+            if (index % 2 === 1 || index === 0 || index === 4 || index === 5 || index === 9) {
+                line.classList.add("accent");
+            }
+            line.setAttribute("d", createConstellationSegmentPath(targets, index));
+            line.setAttribute("fill", "none");
+            line.dataset.from = index;
+            line.dataset.to = (index + 1) % targets.length;
+            line.style.setProperty("--line-delay", `${index * 44}ms`);
+            constellationSvg.appendChild(line);
+            constellationLines[index] = line;
+        });
 
-      const label = document.createElement("div");
-      label.className = "constellation-love";
-      label.textContent = "Я люблю тебя";
+        const label = document.createElement("div");
+        label.className = "constellation-love";
+        label.textContent = "Я люблю тебя";
 
-      constellationLayer.append(constellationSvg);
+        constellationLayer.append(constellationSvg);
 
-      targets.forEach((target, index) => {
-        const node = document.createElement("span");
-        node.className = "constellation-node";
-        node.dataset.index = index;
-        node.style.left = `${target.lx}%`;
-        node.style.top = `${(target.ly / 90) * 100}%`;
-        constellationLayer.appendChild(node);
-        constellationNodes[index] = node;
-      });
+        targets.forEach((target, index) => {
+            const node = document.createElement("span");
+            node.className = "constellation-node";
+            node.dataset.index = index;
+            node.style.left = `${target.lx}%`;
+            node.style.top = `${(target.ly / 90) * 100}%`;
+            constellationLayer.appendChild(node);
+            constellationNodes[index] = node;
+        });
 
-      constellationLayer.appendChild(label);
-      heartText.appendChild(constellationLayer);
+        constellationLayer.appendChild(label);
+        heartText.appendChild(constellationLayer);
     }
 
     function buildConstellationTargets(layout, count) {
-      return getConstellationLocalPoints(count).map(([lx, ly], index) => {
-        const point = heartLocalToViewport(lx, ly, layout);
-        return { index, lx, ly, x: point.x, y: point.y };
-      });
+        return getConstellationLocalPoints(count).map(([lx, ly], index) => {
+            const point = heartLocalToViewport(lx, ly, layout);
+            return { index, lx, ly, x: point.x, y: point.y };
+        });
+    }
+
+    function createConstellationSegmentPath(points, index) {
+        const total = points.length;
+        const prev = points[(index - 1 + total) % total];
+        const curr = points[index];
+        const next = points[(index + 1) % total];
+        const next2 = points[(index + 2) % total];
+        const tension = getConstellationCurveTension(index, total);
+
+        const cp1x = curr.lx + ((next.lx - prev.lx) / 6) * tension;
+        const cp1y = curr.ly + ((next.ly - prev.ly) / 6) * tension;
+        const cp2x = next.lx - ((next2.lx - curr.lx) / 6) * tension;
+        const cp2y = next.ly - ((next2.ly - curr.ly) / 6) * tension;
+
+        return `M ${curr.lx.toFixed(2)} ${curr.ly.toFixed(2)} C ${cp1x.toFixed(2)} ${cp1y.toFixed(2)}, ${cp2x.toFixed(2)} ${cp2y.toFixed(2)}, ${next.lx.toFixed(2)} ${next.ly.toFixed(2)}`;
+    }
+
+    function getConstellationCurveTension(index, total) {
+        if (index === 0 || index === total - 1) return 1.08;
+        if (index === 4 || index === 5) return 1.12;
+        if (index === 2 || index === 7) return 1.02;
+        return 0.96;
     }
 
     function getConstellationLocalPoints(count) {
-      if (count === HEART_CONSTELLATION_POINTS.length) {
-        return HEART_CONSTELLATION_POINTS.map(([x, y]) => [x, y]);
-      }
-
-      const base = HEART_CONSTELLATION_POINTS;
-      const lengths = [];
-      let total = 0;
-      for (let i = 0; i < base.length; i++) {
-        const a = base[i];
-        const b = base[(i + 1) % base.length];
-        const segment = Math.hypot(b[0] - a[0], b[1] - a[1]);
-        lengths.push(segment);
-        total += segment;
-      }
-
-      const points = [];
-      for (let i = 0; i < count; i++) {
-        let dist = (i / count) * total;
-        let segmentIndex = 0;
-        while (dist > lengths[segmentIndex] && segmentIndex < lengths.length - 1) {
-          dist -= lengths[segmentIndex];
-          segmentIndex += 1;
+        if (count === HEART_CONSTELLATION_POINTS.length) {
+            return HEART_CONSTELLATION_POINTS.map(([x, y]) => [x, y]);
         }
 
-        const a = base[segmentIndex];
-        const b = base[(segmentIndex + 1) % base.length];
-        const k = lengths[segmentIndex] ? dist / lengths[segmentIndex] : 0;
-        points.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]);
-      }
-      return points;
+        const base = HEART_CONSTELLATION_POINTS;
+        const lengths = [];
+        let total = 0;
+        for (let i = 0; i < base.length; i++) {
+            const a = base[i];
+            const b = base[(i + 1) % base.length];
+            const segment = Math.hypot(b[0] - a[0], b[1] - a[1]);
+            lengths.push(segment);
+            total += segment;
+        }
+
+        const points = [];
+        for (let i = 0; i < count; i++) {
+            let dist = (i / count) * total;
+            let segmentIndex = 0;
+            while (dist > lengths[segmentIndex] && segmentIndex < lengths.length - 1) {
+                dist -= lengths[segmentIndex];
+                segmentIndex += 1;
+            }
+
+            const a = base[segmentIndex];
+            const b = base[(segmentIndex + 1) % base.length];
+            const k = lengths[segmentIndex] ? dist / lengths[segmentIndex] : 0;
+            points.push([a[0] + (b[0] - a[0]) * k, a[1] + (b[1] - a[1]) * k]);
+        }
+        return points;
     }
 
     function assignConstellationTargets(cometsList, targetsList) {
-      const starsP = cometsList.map((c, i) => ({ i, x: c.x, y: c.y }));
-      const targets = targetsList.map((target) => ({ ...target }));
-      const out = new Array(cometsList.length);
+        const starsP = cometsList.map((c, i) => ({ i, x: c.x, y: c.y }));
+        const targets = targetsList.map((target) => ({ ...target }));
+        const out = new Array(cometsList.length);
 
-      starsP.forEach((s) => {
-        let bi = 0;
-        let bd = Infinity;
-        targets.forEach((t, i) => {
-          const d = (s.x - t.x)*(s.x - t.x) + (s.y - t.y)*(s.y - t.y);
-          if (d < bd) { bd = d; bi = i; }
+        starsP.forEach((s) => {
+            let bi = 0;
+            let bd = Infinity;
+            targets.forEach((t, i) => {
+                const d = (s.x - t.x)*(s.x - t.x) + (s.y - t.y)*(s.y - t.y);
+                if (d < bd) { bd = d; bi = i; }
+            });
+            const pick = targets.splice(bi, 1)[0];
+            out[s.i] = pick;
         });
-        const pick = targets.splice(bi, 1)[0];
-        out[s.i] = pick;
-      });
 
-      return out;
+        return out;
     }
 
     function finaleSpark(x, y, nodeIndex) {
-      // Финальные прилёты раньше создавали много canvas-частиц и SVG-анимаций в один кадр.
-      // Разносим работу по двум кадрам: сначала лёгкая вспышка, затем появление звезды.
-      requestAnimationFrame(() => {
-        explode(x, y, lowPowerMode ? 28 : 34);
-        requestAnimationFrame(() => revealConstellationNode(nodeIndex));
-      });
+        // Финальные прилёты раньше создавали много canvas-частиц и SVG-анимаций в один кадр.
+        // Разносим работу по двум кадрам: сначала лёгкая вспышка, затем появление звезды.
+        requestAnimationFrame(() => {
+            explode(x, y, lowPowerMode ? 28 : 34);
+            requestAnimationFrame(() => revealConstellationNode(nodeIndex));
+        });
     }
 
     function finishFinaleSmoothly() {
-      finaleComplete = true;
-      assembling = false;
-      lockedHeartLayout = null;
-      status.textContent = "Я люблю тебя";
+        finaleComplete = true;
+        assembling = false;
+        lockedHeartLayout = null;
+        status.textContent = "Я люблю тебя";
 
-      // Линии и общий show-класс запускаются отдельно, чтобы не было единого тяжёлого кадра.
-      requestAnimationFrame(() => {
-        revealAllConstellationLines(true);
-        setTimeout(() => {
-          requestAnimationFrame(() => heartText.classList.add("show"));
-        }, 120);
-      });
+        // Линии и общий show-класс запускаются отдельно, чтобы не было единого тяжёлого кадра.
+        requestAnimationFrame(() => {
+            revealAllConstellationLines(true);
+            setTimeout(() => {
+                requestAnimationFrame(() => heartText.classList.add("show"));
+            }, 120);
+        });
     }
 
     function revealConstellationNode(index) {
-      if (!Number.isInteger(index) || !constellationNodes[index]) return;
+        if (!Number.isInteger(index) || !constellationNodes[index]) return;
 
-      revealedConstellationNodes.add(index);
-      constellationNodes[index].classList.add("active");
-      revealConstellationLinesFor(index);
+        revealedConstellationNodes.add(index);
+        constellationNodes[index].classList.add("active");
+        revealConstellationLinesFor(index);
     }
 
     function revealConstellationLinesFor(index) {
-      const total = constellationNodes.length;
-      if (!total) return;
+        const total = constellationNodes.length;
+        if (!total) return;
 
-      const prev = (index - 1 + total) % total;
-      const next = (index + 1) % total;
-      if (revealedConstellationNodes.has(prev)) constellationLines[prev]?.classList.add("active");
-      if (revealedConstellationNodes.has(next)) constellationLines[index]?.classList.add("active");
+        const prev = (index - 1 + total) % total;
+        const next = (index + 1) % total;
+        if (revealedConstellationNodes.has(prev)) constellationLines[prev]?.classList.add("active");
+        if (revealedConstellationNodes.has(next)) constellationLines[index]?.classList.add("active");
     }
 
     function revealAllConstellationNodes() {
-      constellationNodes.forEach((node, index) => {
-        revealedConstellationNodes.add(index);
-        node.classList.add("active");
-      });
+        constellationNodes.forEach((node, index) => {
+            revealedConstellationNodes.add(index);
+            node.classList.add("active");
+        });
     }
 
     function revealAllConstellationLines(stagger = false) {
-      constellationLines.forEach((line, index) => {
-        if (!line) return;
-        if (stagger) line.style.setProperty("--line-delay", `${index * 28}ms`);
-        else line.style.removeProperty("--line-delay");
-        line.classList.add("active");
-      });
+        constellationLines.forEach((line, index) => {
+            if (!line) return;
+            if (stagger) line.style.setProperty("--line-delay", `${index * 28}ms`);
+            else line.style.removeProperty("--line-delay");
+            line.classList.add("active");
+        });
     }
 
     function applyConstellationLayout(layout) {
-      const target = constellationLayer || heartText;
-      target.style.setProperty("--heart-w", `${layout.visualWidth}%`);
-      target.style.setProperty("--heart-h", `${(layout.bottom - layout.top).toFixed(2)}%`);
-      target.style.setProperty("--heart-y", `${((layout.top + layout.bottom) / 2).toFixed(2)}%`);
+        const target = constellationLayer || heartText;
+        target.style.setProperty("--heart-w", `${layout.visualWidth}%`);
+        target.style.setProperty("--heart-h", `${(layout.bottom - layout.top).toFixed(2)}%`);
+        target.style.setProperty("--heart-y", `${((layout.top + layout.bottom) / 2).toFixed(2)}%`);
     }
 
     function getHeartLayout() {
-      const width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0, 320);
-      const height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0, 640);
-      const portraitPhone = width <= 560 && height > width * 1.12;
-      const landscapePhone = height <= 560 && width <= 960;
-      const tablet = !portraitPhone && !landscapePhone && width > 560 && width <= 900;
-      const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
-      const visualWidth = portraitPhone ? (width < 380 ? 82 : 86) : landscapePhone ? 48 : tablet ? 58 : 44;
-      const targetAspect = 1.24;
-      const minHeight = portraitPhone ? 29 : landscapePhone ? 56 : tablet ? 38 : 50;
-      const maxHeight = portraitPhone ? 36 : landscapePhone ? 70 : tablet ? 52 : 64;
-      const heightPct = clamp(((width * visualWidth / 100) / targetAspect / height) * 100, minHeight, maxHeight);
-      const centerY = 50;
-      const top = centerY - heightPct / 2;
-      const bottom = centerY + heightPct / 2;
+        const width = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0, 320);
+        const height = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0, 640);
+        const portraitPhone = width <= 560 && height > width * 1.12;
+        const landscapePhone = height <= 560 && width <= 960;
+        const tablet = !portraitPhone && !landscapePhone && width > 560 && width <= 900;
+        const clamp = (value, min, max) => Math.min(max, Math.max(min, value));
+        const visualWidth = portraitPhone ? (width < 380 ? 82 : 86) : landscapePhone ? 48 : tablet ? 58 : 44;
+        const targetAspect = 1.24;
+        const minHeight = portraitPhone ? 29 : landscapePhone ? 56 : tablet ? 38 : 50;
+        const maxHeight = portraitPhone ? 36 : landscapePhone ? 70 : tablet ? 52 : 64;
+        const heightPct = clamp(((width * visualWidth / 100) / targetAspect / height) * 100, minHeight, maxHeight);
+        const centerY = 50;
+        const top = centerY - heightPct / 2;
+        const bottom = centerY + heightPct / 2;
 
-      return { visualWidth, top, bottom, mobileProfile: portraitPhone };
+        return { visualWidth, top, bottom, mobileProfile: portraitPhone };
     }
 
     function heartLocalToViewport(localX, localY, layout) {
-      return {
-        x: 50 - layout.visualWidth / 2 + (localX / 100) * layout.visualWidth,
-        y: layout.top + (localY / 90) * (layout.bottom - layout.top)
-      };
+        return {
+            x: 50 - layout.visualWidth / 2 + (localX / 100) * layout.visualWidth,
+            y: layout.top + (localY / 90) * (layout.bottom - layout.top)
+        };
     }
 
     let resizeTimer = 0;
     window.addEventListener("resize", () => {
-      clearTimeout(resizeTimer);
-      updateOrientationHint();
-      resizeTimer = setTimeout(() => {
-        updateLowPowerMode();
-        resizeFxCanvas();
-        if (!constellationTargets.length || !heartText.children.length) return;
-        if (assembling && !finaleComplete) return;
+        clearTimeout(resizeTimer);
+        updateOrientationHint();
+        resizeTimer = setTimeout(() => {
+            updateLowPowerMode();
+            resizeFxCanvas();
+            if (!constellationTargets.length || !heartText.children.length) return;
+            if (assembling && !finaleComplete) return;
 
-        const layout = getHeartLayout();
-        lockedHeartLayout = layout;
-        constellationTargets = buildConstellationTargets(layout, letters.length);
-        resetConstellation(constellationTargets);
-        if (finaleComplete) {
-          heartText.classList.add("revealing", "show");
-          revealAllConstellationNodes();
-          revealAllConstellationLines();
-        }
-        lockedHeartLayout = null;
-      }, 160);
+            const layout = getHeartLayout();
+            lockedHeartLayout = layout;
+            constellationTargets = buildConstellationTargets(layout, letters.length);
+            resetConstellation(constellationTargets);
+            if (finaleComplete) {
+                heartText.classList.add("revealing", "show");
+                revealAllConstellationNodes();
+                revealAllConstellationLines();
+            }
+            lockedHeartLayout = null;
+        }, 160);
     });
 
     window.addEventListener("orientationchange", updateOrientationHint);
     if (screen.orientation && screen.orientation.addEventListener) {
-      screen.orientation.addEventListener("change", updateOrientationHint);
+        screen.orientation.addEventListener("change", updateOrientationHint);
     }
     if (coarsePointerQuery && coarsePointerQuery.addEventListener) {
-      coarsePointerQuery.addEventListener("change", updateOrientationHint);
+        coarsePointerQuery.addEventListener("change", updateOrientationHint);
     }
 
     initQualityMode();
     updateOrientationHint();
     letters.forEach(makeStar);
-  </script>
+</script>
 </body>
 </html>
